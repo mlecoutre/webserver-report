@@ -138,21 +138,21 @@
 <script src="js/utilities.js"></script>
 <script src="js/datasource.js"></script>
 
-<script type="text/x-template" id="ass-template">
+
+<script type="text/x-template" id="options-template">
     {{#.}}
     <option value="{{.}}"></option>
     {{/.}}
 </script>
-<script type="text/x-template" id="servers-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
+
+<script type="text/x-template" id="list-template">
+    <ul>
+        {{#.}}
+        <li>{{.}}</li>
+        {{/.}}
+    </ul>
 </script>
-<script type="text/x-template" id="dataSources-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
-</script>
+
 
 </body>
 </html>

@@ -72,7 +72,7 @@
                             <label for="selApplicationName">Application Name<input type="text" id="selApplicationName"
                                                                                    list="applications"> </label>
                             <datalist id="applications">
-                                <option value="SteelUser">
+
                             </datalist>
                         </div>
                         <div class="span4">
@@ -138,20 +138,18 @@
 <script src="js/utilities.js"></script>
 <script src="js/datasource.js"></script>
 
-<script type="text/x-template" id="ass-template">
+<script type="text/x-template" id="options-template">
     {{#.}}
     <option value="{{.}}"></option>
     {{/.}}
 </script>
-<script type="text/x-template" id="servers-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
-</script>
-<script type="text/x-template" id="qcfs-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
+
+<script type="text/x-template" id="list-template">
+    <ul>
+        {{#.}}
+        <li>{{.}}</li>
+        {{/.}}
+    </ul>
 </script>
 
 </body>

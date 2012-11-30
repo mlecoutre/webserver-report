@@ -13,7 +13,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -94,7 +96,6 @@ public class MonitorService implements Constants {
      * List Application Server
      *
      * @param applicationName Mongo collection to request
-
      * @return List of dataSources
      */
     public static List<String> listASs(String applicationName) {
@@ -110,7 +111,6 @@ public class MonitorService implements Constants {
      * List Application Server
      *
      * @param applicationName Mongo collection to request
-
      * @return List of dataSources
      */
     public static List<String> listServers(String applicationName) {
@@ -120,6 +120,19 @@ public class MonitorService implements Constants {
         List mList = coll.distinct("server");
         System.out.println("listServers: " + mList.size());
         return mList;
+    }
+
+    /**
+     * return list of the applications that have some data
+     *
+     * @return Set of Mongo Collection
+     */
+    public static Set<String> listApplications() {
+        DB db = MongoListener.getMongoDB();
+        Set<String> collections = db.getCollectionNames();
+        //remove the technical system.indexes from the list of applications;
+        collections.remove("system.indexes");
+        return collections;
     }
 
     /**
@@ -205,12 +218,12 @@ public class MonitorService implements Constants {
         stats.setDataSources(listDataSources(applicationName, null, null));
         stats.setAss(listASs(applicationName));
         stats.setServers(listServers(applicationName));
-      /*  BasicDBObject fields = new BasicDBObject();
-        fields.put("timestamp", 1);
-        coll.findOne(fields);
-        BasicDBObject sortDBO = new BasicDBObject();
-        sortDBO.put("timestamp", "-1");
-        DBCursor cursor = coll.findOne(fields).sort(sortDBO);*/
+        /*  BasicDBObject fields = new BasicDBObject();
+     fields.put("timestamp", 1);
+     coll.findOne(fields);
+     BasicDBObject sortDBO = new BasicDBObject();
+     sortDBO.put("timestamp", "-1");
+     DBCursor cursor = coll.findOne(fields).sort(sortDBO);*/
         return stats;
     }
 

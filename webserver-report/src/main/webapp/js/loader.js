@@ -4,7 +4,19 @@ function LoaderCtrl($scope, $http) {
     $scope.nbElements = 0;
     $scope.startDate = 'dd-MM-yyyy';
     $scope.endDate = 'dd-MM-yyyy';
+    $scope.applications = null;
 
+        function initApplication() {
+            var reqDS = $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                url: '/report/services/MonitorConfig/applications'
+            });
+            reqDS.done(function (applications) {
+                // check http://stackoverflow.com/questions/12356185/angular-js-delaying-controller-initialization
+
+            });
+        }
 
     $scope.addFile = function () {
         $scope.files.push({
@@ -44,9 +56,9 @@ function LoaderCtrl($scope, $http) {
             console.log("success");
             $scope.nbElements = data.nbElements;
             /* TODO RETRIEVE OTHERS STATS*/
-            $('#dataSources').html(Mustache.to_html($('#dataSources-template').html(), data));
-            $('#ass').html(Mustache.to_html($('#ass-template').html(), data));
-            $('#servers').html(Mustache.to_html($('#servers-template').html(), data));
+            $('#dataSources').html(Mustache.to_html($('#list-template').html(), data));
+            $('#ass').html(Mustache.to_html($('#list-template').html(), data));
+            $('#servers').html(Mustache.to_html($('#list-template').html(), data));
 
         })
             .error(function (data, status, headers, config) {

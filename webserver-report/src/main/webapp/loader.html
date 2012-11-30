@@ -60,7 +60,7 @@
                                                                     list="applications" ng-model="applicationName">
                 </label>
                 <datalist id="applications">
-                    <option value="SteelUser">
+
                 </datalist>
             </div>
             <div class="span4">
@@ -146,28 +146,19 @@
 <script src="lib/js/angular.min.js"></script>
 <script src="js/loader.js"></script>
 
-<script type="text/x-template" id="dataSources-template">
+<script type="text/x-template" id="options-template">
+    {{#.}}
+    <option value="{{.}}"></option>
+    {{/.}}
+</script>
+
+<script type="text/x-template" id="list-template">
     <ul>
-        {{#dataSources}}
+        {{#.}}
         <li>{{.}}</li>
-        {{/dataSources}}
+        {{/.}}
     </ul>
 </script>
 
-<script type="text/x-template" id="ass-template">
-    <ul>
-        {{#ass}}
-        <li>{{.}}</li>
-        {{/ass}}
-    </ul>
-</script>
-
-<script type="text/x-template" id="servers-template">
-    <ul>
-        {{#servers}}
-        <li>{{.}}</li>
-        {{/servers}}
-    </ul>
-</script>
 </body>
 </html>

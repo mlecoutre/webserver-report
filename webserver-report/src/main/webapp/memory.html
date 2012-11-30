@@ -127,15 +127,20 @@
 <script src="lib/js/modules/exporting.js"></script>
 <script src="js/utilities.js"></script>
 <script src="js/memory.js"></script>
-<script type="text/x-template" id="ass-template">
+
+<script type="text/x-template" id="options-template">
     {{#.}}
     <option value="{{.}}"></option>
     {{/.}}
 </script>
-<script type="text/x-template" id="servers-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
+
+<script type="text/x-template" id="list-template">
+    <ul>
+        {{#.}}
+        <li>{{.}}</li>
+        {{/.}}
+    </ul>
 </script>
+
 </body>
 </html>

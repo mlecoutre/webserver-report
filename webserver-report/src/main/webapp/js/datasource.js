@@ -2,7 +2,19 @@
     /** DOCUMENT READY - INITIALIZATION **/
     $(document).ready(function () {
         chart = initChart();
+        initApplication();
     });
+
+        function initApplication() {
+            var reqDS = $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                url: '/report/services/MonitorConfig/applications'
+            });
+            reqDS.done(function (applications) {
+                $('#applications').html(Mustache.to_html($('#options-template').html(), applications));
+            });
+        }
 
     function initASs(applicationName) {
         var reqDS = $.ajax({
@@ -11,7 +23,7 @@
             url: '/report/services/MonitorConfig/ass/' + applicationName
         });
         reqDS.done(function (ass) {
-            $('#ass').html(Mustache.to_html($('#ass-template').html(), ass));
+            $('#ass').html(Mustache.to_html($('#options-template').html(), ass));
         });
     }
 
@@ -22,7 +34,7 @@
             url: '/report/services/MonitorConfig/servers/' + applicationName
         });
         reqDS.done(function (servers) {
-            $('#servers').html(Mustache.to_html($('#servers-template').html(), servers));
+            $('#servers').html(Mustache.to_html($('#options-template').html(), servers));
         });
     }
 
@@ -36,7 +48,7 @@
             url: '/report/services/MonitorConfig/dataSources/' + applicationName + '/' + server + '/' + as
         });
         reqDS.done(function (dataSources) {
-            $('#dataSources').html(Mustache.to_html($('#dataSources-template').html(), dataSources));
+            $('#dataSources').html(Mustache.to_html($('#options-template').html(), dataSources));
             $('#dataSourceBox').show();
             $('#showDS').toggleClass('btn-primary');
             $('#display').toggleClass('btn-primary');

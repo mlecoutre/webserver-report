@@ -6,8 +6,10 @@ import org.mat.samples.mongodb.vo.HttpFile;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Set;
 
 /**
+ * Allow to get Configuration elements to initialize pages
  * User: E010925
  * Date: 28/11/12
  * Time: 11:21
@@ -15,6 +17,12 @@ import java.util.List;
 @Path("/MonitorConfig")
 @Produces(MediaType.APPLICATION_JSON)
 public class MonitorConfigService {
+
+    @GET
+    @Path("/applications")
+    public Set<String> listApplication() {
+        return MonitorService.listApplications();
+    }
 
     @GET
     @Path("/dataSources/{appliName}/{serverName}/{asName}")
@@ -37,15 +45,15 @@ public class MonitorConfigService {
     @POST
     @Path("/{applicationName}")
     public String loadData(List<HttpFile> files, @PathParam("applicationName") String applicationName) {
-        long sum = 0;
+        long count = 0;
         for (HttpFile f : files) {
             //extract asName and serverName from the fileName
             String[] arr = f.getFileName().split("/");
             String asName = arr[arr.length - 2];
             String serverName = arr[2];
-            sum += MonitorService.batchInsert(f.getFileName(), applicationName, serverName, asName);
+            count = MonitorService.batchInsert(f.getFileName(), applicationName, serverName, asName);
         }
-        return sum + "Elements loaded";
+        return String.format("%d elements stored in the dataStore for the application %s", count, applicationName);
     }
 
     @GET

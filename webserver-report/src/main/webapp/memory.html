@@ -15,7 +15,7 @@
     <div class="navbar-inner">
         <div class="container">
 
-            <a class="brand" href="/">Reports App</a>
+            <a class="brand" href="index.html">Reports App</a>
 
 
             <ul class="nav">
@@ -30,6 +30,7 @@
                         </li>
                         <li><a tabindex="-1" href="memory.html">Memory</a></li>
                         <li><a tabindex="-1" href="thread.html">Threads</a></li>
+                        <li><a tabindex="-1" href="jms.html">JMS</a></li>
                     </ul>
                 </li>
                 <li><a href="about.html">About</a></li>
@@ -40,7 +41,7 @@
             </p>
 
             <p class="navbar-text pull-right hide" id="loadingIndicator">
-                <img src="../img/ajax-loader.gif"/>
+                <img src="img/ajax-loader.gif"/>
             </p>
 
             <p class="navbar-text pull-right hide" id="authBox_request">
@@ -121,10 +122,20 @@
 <script src="lib/js/jquery.json-2.3.js"></script>
 <script src="lib/js/highstock.js"></script>
 <script src="lib/js/highcharts-more.js"></script>
+<script src="lib/js/mustache.js"></script>
 <script type="text/javascript" src="lib/js/themes/gray.js"></script>
 <script src="lib/js/modules/exporting.js"></script>
 <script src="js/utilities.js"></script>
 <script src="js/memory.js"></script>
-
+<script type="text/x-template" id="ass-template">
+    {{#.}}
+    <option value="{{.}}"></option>
+    {{/.}}
+</script>
+<script type="text/x-template" id="servers-template">
+    {{#.}}
+    <option value="{{.}}"></option>
+    {{/.}}
+</script>
 </body>
 </html>

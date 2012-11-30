@@ -16,8 +16,6 @@
         <div class="container">
 
             <a class="brand" href="index.html">Reports App</a>
-
-
             <ul class="nav">
                 <li><a href="index.html" data-i18n="commons:navbar.home"></a></li>
 
@@ -54,12 +52,11 @@
     </div>
 </div>
 
-
 <div class="container">
 
     <p>&nbsp;</p><br/>
 
-    <h2 class="report">JEE Resources - Threads</h2>
+    <h2 class="report">JEE Resources - JMS</h2>
 
     <div class="accordion" id="accordion2">
         <div class="accordion-group">
@@ -70,27 +67,50 @@
             </div>
             <div id="collapseOne" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <label for="selApplicationName">Application Name<input type="text" id="selApplicationName"
-                                                                           list="applications"> </label>
-                    <datalist id="applications">
-                        <option value="SteelUser">
-                    </datalist>
-                    <label for="selAS">AS<input type="text" id="selAS" cc list="ass"/> </label>
-                    <datalist id="ass">
+                    <div class="row">
+                        <div class="span4">
+                            <label for="selApplicationName">Application Name<input type="text" id="selApplicationName"
+                                                                                   list="applications"> </label>
+                            <datalist id="applications">
+                                <option value="SteelUser">
+                            </datalist>
+                        </div>
+                        <div class="span4">
+                            <label for="selAS">AS<input type="text" id="selAS" cc list="ass"/> </label>
+                            <datalist id="ass">
 
-                    </datalist>
-                    <label for="selServer">Servers<input type="text" id="selServer" cc list="servers"> </label>
-                    <datalist id="servers">
+                            </datalist>
 
-                    </datalist>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="selServer">Servers<input type="text" id="selServer" cc list="servers"> </label>
+                            <datalist id="servers">
+
+                            </datalist>
+                        </div>
+                        <div class="span4">
+                            <label class="hide" id="JMSBox" for="selQCF">Queue Connection Factory<input type="text"
+                                                                                                        id="selQCF"
+                                                                                                        cc
+                                                                                                        list="qcfs">
+                            </label>
+
+                            <datalist id="qcfs">
+
+                            </datalist>
+                        </div>
+                    </div>
+
                     <div class="btn-group">
-                        <input type="button" id="display" class="btn btn-primary" value="Display"/>
+                        <input type="button" id="showDS" class="btn btn-primary" value="Get DataSources"/>
+                        <input type="button" id="display" class="btn" value="Display"/>
                         <input type="button" id="clear" class="btn" value="Clear"/>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
     <div id="memoryContainer" style="width:1000px; height:500px">
 
@@ -116,7 +136,8 @@
 <script type="text/javascript" src="lib/js/themes/gray.js"></script>
 <script src="lib/js/modules/exporting.js"></script>
 <script src="js/utilities.js"></script>
-<script src="js/thread.js"></script>
+<script src="js/datasource.js"></script>
+
 <script type="text/x-template" id="ass-template">
     {{#.}}
     <option value="{{.}}"></option>
@@ -127,5 +148,11 @@
     <option value="{{.}}"></option>
     {{/.}}
 </script>
+<script type="text/x-template" id="qcfs-template">
+    {{#.}}
+    <option value="{{.}}"></option>
+    {{/.}}
+</script>
+
 </body>
 </html>

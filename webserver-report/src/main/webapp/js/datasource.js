@@ -1,10 +1,30 @@
 (function ($) {
     /** DOCUMENT READY - INITIALIZATION **/
     $(document).ready(function () {
-
         chart = initChart();
-
     });
+
+    function initASs(applicationName) {
+        var reqDS = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: '/report/services/MonitorConfig/ass/' + applicationName
+        });
+        reqDS.done(function (ass) {
+            $('#ass').html(Mustache.to_html($('#ass-template').html(), ass));
+        });
+    }
+
+    function initServers(applicationName) {
+        var reqDS = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: '/report/services/MonitorConfig/servers/' + applicationName
+        });
+        reqDS.done(function (servers) {
+            $('#servers').html(Mustache.to_html($('#servers-template').html(), servers));
+        });
+    }
 
     function initDataSourceList() {
         var as = $('#selAS').val();
@@ -13,7 +33,7 @@
         var reqDS = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: '/services/MonitorConfig/' + applicationName +'/' + server + '/' + as
+            url: '/report/services/MonitorConfig/dataSources/' + applicationName + '/' + server + '/' + as
         });
         reqDS.done(function (dataSources) {
             $('#dataSources').html(Mustache.to_html($('#dataSources-template').html(), dataSources));
@@ -23,18 +43,24 @@
         });
     }
 
+    $("#selApplicationName").focusout(function(){
+        if(applicationName !== null && applicationName!= ""){
+            var applicationName = $('#selApplicationName').val();
+            initServers(applicationName);
+            initASs(applicationName);
+         }
+    });
+
     $('#showDS').click(function () {
         initDataSourceList();
     });
 
     $('#display').click(function () {
-        //TODO: clean the chart when click on the display button
         var as = $('#selAS').val();
         var server = $('#selServer').val();
         var dataSource = $('#selDataSource').val();
-        var applicationName = $('#selapplicationName').val();
+        var applicationName = $('#selApplicationName').val();
         addDSChart(chart, 'ds-used-connections', applicationName, server, as, dataSource);
-
     });
 
     $('#clear').click(function () {
@@ -50,7 +76,7 @@
             title: 'Monitoring reports',
             yAxis: {
                 title: {
-                    text: 'Megabytes'
+                    text: 'Nb opened connections'
                 }
             },
             plotOptions: {
@@ -80,7 +106,7 @@
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: 'http://localhost:9090/monitor?action=' + type +'&applicationName='+applicationName+ '&server=' + server + '&as=' + as + '&dataSource=' + ds
+            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as + '&dataSource=' + ds
 
         });
         reqA.done(function (mem) {

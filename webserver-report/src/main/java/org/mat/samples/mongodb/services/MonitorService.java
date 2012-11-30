@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.util.JSON;
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
+import org.mat.samples.mongodb.vo.ApplicationStats;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,7 +65,7 @@ public class MonitorService implements Constants {
     }
 
     /**
-     * listDataSources
+     * List DataSources
      *
      * @param applicationName Mongo collection to request
      * @param serverName      server name
@@ -85,6 +86,39 @@ public class MonitorService implements Constants {
 
         List mList = coll.distinct("id", filter);
         System.out.println("listDataSources: " + mList.size());
+        return mList;
+    }
+
+
+    /**
+     * List Application Server
+     *
+     * @param applicationName Mongo collection to request
+
+     * @return List of dataSources
+     */
+    public static List<String> listASs(String applicationName) {
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+
+        List mList = coll.distinct("asName");
+        System.out.println("listASs: " + mList.size());
+        return mList;
+    }
+
+    /**
+     * List Application Server
+     *
+     * @param applicationName Mongo collection to request
+
+     * @return List of dataSources
+     */
+    public static List<String> listServers(String applicationName) {
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+
+        List mList = coll.distinct("server");
+        System.out.println("listServers: " + mList.size());
         return mList;
     }
 
@@ -154,6 +188,30 @@ public class MonitorService implements Constants {
         System.out.println("Nb elements before: " + coll.count());
         coll.drop();
         System.out.println("Nb elements after: " + coll.count());
+    }
+
+
+    /**
+     * Request statistics
+     *
+     * @param applicationName MongoDB collection to request
+     * @return Statistics on data stored for the application
+     */
+    public static ApplicationStats requestStats(String applicationName) {
+        ApplicationStats stats = new ApplicationStats(applicationName);
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+        stats.setNbElements(coll.count());
+        stats.setDataSources(listDataSources(applicationName, null, null));
+        stats.setAss(listASs(applicationName));
+        stats.setServers(listServers(applicationName));
+      /*  BasicDBObject fields = new BasicDBObject();
+        fields.put("timestamp", 1);
+        coll.findOne(fields);
+        BasicDBObject sortDBO = new BasicDBObject();
+        sortDBO.put("timestamp", "-1");
+        DBCursor cursor = coll.findOne(fields).sort(sortDBO);*/
+        return stats;
     }
 
     /**

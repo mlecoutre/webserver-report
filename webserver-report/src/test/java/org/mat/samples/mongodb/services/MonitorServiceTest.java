@@ -8,7 +8,12 @@ import org.junit.Test;
 import org.mat.samples.mongodb.listener.MongoListener;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -48,16 +53,35 @@ public class MonitorServiceTest {
 
     @Test
     public void testRequestUsedConnection() throws Exception {
-        MonitorService.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, System.out);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MonitorService.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        assertNotNull("TotalThreads should not be null", baos.toString());
     }
 
     @Test
     public void testRequestTotalThreads() throws Exception {
-        MonitorService.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, System.out);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MonitorService.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        assertNotNull("TotalThreads should not be null", baos.toString());
     }
 
     @Test
+    public void testListServers() {
+        List<String> servers = MonitorService.listServers(APPLICATION_NAME);
+        System.out.println("servers: " + servers.size());
+        assertTrue("We should have only one server appcfm51", servers.size() == 1);
+        assertEquals("Server should be appcfm51", servers.get(0), "appcfm51");
+    }
 
+    @Test
+    public void testListASs() {
+        List<String> ass = MonitorService.listASs(APPLICATION_NAME);
+        System.out.println("ass: " + ass.size());
+        assertTrue("We should have only one AS", ass.size() == 1);
+        assertEquals("AS should be AS_STEELUSER", ass.get(0), "AS_STEELUSER");
+    }
+
+    @Test
     public void testGetServerInfo() {
         String[] array = "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-26".split("/");
         System.out.println(array[2] + "/" + array[array.length - 2]);

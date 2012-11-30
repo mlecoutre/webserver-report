@@ -1,5 +1,6 @@
 package org.mat.samples.mongodb.services;
 
+import org.mat.samples.mongodb.vo.ApplicationStats;
 import org.mat.samples.mongodb.vo.HttpFile;
 
 import javax.ws.rs.*;
@@ -16,9 +17,21 @@ import java.util.List;
 public class MonitorConfigService {
 
     @GET
-    @Path("/{appliName}/{serverName}/{asName}")
+    @Path("/dataSources/{appliName}/{serverName}/{asName}")
     public List<String> listDataSources(@PathParam("appliName") String appliName, @PathParam("serverName") String serverName, @PathParam("asName") String asName) {
         return MonitorService.listDataSources(appliName, serverName, asName);
+    }
+
+    @GET
+    @Path("/ass/{appliName}")
+    public List<String> listASs(@PathParam("appliName") String appliName) {
+        return MonitorService.listASs(appliName);
+    }
+
+    @GET
+    @Path("/servers/{appliName}")
+    public List<String> listServers(@PathParam("appliName") String appliName) {
+        return MonitorService.listServers(appliName);
     }
 
     @POST
@@ -33,6 +46,23 @@ public class MonitorConfigService {
             sum += MonitorService.batchInsert(f.getFileName(), applicationName, serverName, asName);
         }
         return sum + "Elements loaded";
+    }
 
+    @GET
+    @Path("/stats/{appliName}")
+    public ApplicationStats getStats(@PathParam("appliName") String appliName) {
+        return MonitorService.requestStats(appliName);
+    }
+
+    @GET
+    @Path("/purge/{appliName}")
+    public boolean purge(@PathParam("appliName") String appliName) {
+        try {
+            MonitorService.purgeDB(appliName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

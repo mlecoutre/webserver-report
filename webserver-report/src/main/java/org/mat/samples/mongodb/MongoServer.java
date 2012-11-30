@@ -20,7 +20,7 @@ public class MongoServer {
         }
 
         tomcat.setPort(Integer.valueOf(webPort));
-        Context ctx = tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
+        Context ctx = tomcat.addWebapp("/report", new File(webappDirLocation).getAbsolutePath());
         System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
 
         //declare an alternate location for your "WEB-INF/classes" dir: - (enable servlet 3.0)

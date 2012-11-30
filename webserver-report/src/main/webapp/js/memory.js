@@ -2,10 +2,39 @@
     /** DOCUMENT READY - INITIALIZATION **/
     $(document).ready(function () {
         chart = initChart();
-
     });
 
-    $('#display').click(function(){
+    function initASs(applicationName) {
+        var reqDS = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: '/report/services/MonitorConfig/ass/' + applicationName
+        });
+        reqDS.done(function (ass) {
+            $('#ass').html(Mustache.to_html($('#ass-template').html(), ass));
+        });
+    }
+
+    function initServers(applicationName) {
+        var reqDS = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: '/report/services/MonitorConfig/servers/' + applicationName
+        });
+        reqDS.done(function (servers) {
+            $('#servers').html(Mustache.to_html($('#servers-template').html(), servers));
+        });
+    }
+
+    $("#selApplicationName").focusout(function () {
+        if (applicationName !== null && applicationName != "") {
+            var applicationName = $('#selApplicationName').val();
+            initServers(applicationName);
+            initASs(applicationName);
+        }
+    });
+
+    $('#display').click(function () {
         var applicationName = $('#selApplicationName').val();
         var as = $('#selAS').val();
         var server = $('#selServer').val();
@@ -21,7 +50,7 @@
     });
 
     function initChart() {
-            chart = new Highcharts.Chart({
+        chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'memoryContainer'
             },
@@ -32,13 +61,13 @@
                 }
             },
             plotOptions: {
-                               spline: {
-                                   marker: {
-                                       radius: 0,
-                                       lineColor: '#666666',
-                                       lineWidth: 0
-                                   }
-                               }
+                spline: {
+                    marker: {
+                        radius: 0,
+                        lineColor: '#666666',
+                        lineWidth: 0
+                    }
+                }
             },
             xAxis: {
                 type: 'datetime',
@@ -46,7 +75,7 @@
             tooltip: {
                 formatter: function () {
 
-                    return $.datepicker.formatDate('yy-mm-dd', (new Date(this.x))) + ' : ' +this.y;
+                    return $.datepicker.formatDate('yy-mm-dd', (new Date(this.x))) + ' : ' + this.y;
                     //return this.y + "Mb";
                 }
             },
@@ -55,11 +84,11 @@
         return chart;
     }
 
-    function addMemoryChart(chart,type, applicationName, server, as) {
+    function addMemoryChart(chart, type, applicationName, server, as) {
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: 'http://localhost:9090/monitor?action='+type+'&applicationName='+applicationName+'&server='+server+'&as='+as
+            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as
         });
         reqA.done(function (mem) {
             chart.addSeries({

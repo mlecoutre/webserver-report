@@ -76,3 +76,8 @@ label.error {
   text-decoration: line-through;
   color: grey;
 }
+
+.appli-button-grp{
+    padding-top:20px;
+    margin-left: -80px;
+}

@@ -12,7 +12,7 @@
     <div class="navbar-inner">
         <div class="container">
 
-            <a class="brand" href="/">Reports App</a>
+            <a class="brand" href="index.html">Reports App</a>
 
 
             <ul class="nav">
@@ -37,7 +37,7 @@
             </p>
 
             <p class="navbar-text pull-right hide" id="loadingIndicator">
-                <img src="../img/ajax-loader.gif"/>
+                <img src="img/ajax-loader.gif"/>
             </p>
 
             <p class="navbar-text pull-right hide" id="authBox_request">
@@ -54,12 +54,24 @@
     <h2>Todo</h2>
 
     <div ng-controller="LoaderCtrl">
+        <div class="row">
+            <div class="span4">
+                <label for="applicationName">Application Name<input type="text" id="applicationName" cc
+                                                                    list="applications" ng-model="applicationName">
+                </label>
+                <datalist id="applications">
+                    <option value="SteelUser">
+                </datalist>
+            </div>
+            <div class="span4">
+                <div class="btn-group appli-button-grp">
+                    <a href="#statsModal" role="button" class="btn btn-primary" ng-click="stats()" data-toggle="modal">Get
+                        stats</a>
 
-        <label for="applicationName">Application Name<input type="text" id="applicationName" cc list="applications" ng-model="applicationName">
-        </label>
-        <datalist id="applications">
-            <option value="SteelUser">
-        </datalist>
+                    <input type="button" id="purge" class="btn" ng-click="purge()" value="Purge"/>
+                </div>
+            </div>
+        </div>
         <div class="well">
             <span>{{files.length}} file(s) to load</span>
             <ul class="unstyled">
@@ -75,13 +87,47 @@
         </div>
         </form>
         <a href="" ng-click="load()" class="btn btn-primary">Load on server</a>
+
         <p> &nbsp;
+
         <div id="info" class="alert alert-success hide">
 
         </div>
         </p>
+
+        <!-- Modal -->
+        <div id="statsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Statistics</h3>
+            </div>
+            <div class="modal-body">
+                <label>Count elements<input type="text" ng-model="nbElements" disabled></label>
+                <label>Start date<input type="text" ng-model="startDate" disabled></label>
+                <label>End date<input type="text" ng-model="endDate" disabled></label>
+
+                <label>Servers</label>
+                <div id="servers" class="well">
+
+                </div>
+                <label>Application Server</label>
+
+                <div id="ass" class="well">
+
+                </div>
+                <label>DataSources</label>
+                <div id="dataSources" class="well">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <div>
     <footer>
@@ -95,7 +141,33 @@
 <script src="lib/js/jquery-1.8.2.js"></script>
 <script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
 <script src="lib/js/bootstrap.min.js"></script>
+<script src="lib/js/mustache.js"></script>
+<script src="lib/js/bootbox.min.js"></script>
 <script src="lib/js/angular.min.js"></script>
 <script src="js/loader.js"></script>
+
+<script type="text/x-template" id="dataSources-template">
+    <ul>
+        {{#dataSources}}
+        <li>{{.}}</li>
+        {{/dataSources}}
+    </ul>
+</script>
+
+<script type="text/x-template" id="ass-template">
+    <ul>
+        {{#ass}}
+        <li>{{.}}</li>
+        {{/ass}}
+    </ul>
+</script>
+
+<script type="text/x-template" id="servers-template">
+    <ul>
+        {{#servers}}
+        <li>{{.}}</li>
+        {{/servers}}
+    </ul>
+</script>
 </body>
 </html>

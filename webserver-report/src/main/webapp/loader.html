@@ -1,19 +1,18 @@
 <!doctype html>
-<html ng-app>
+<html>
 <head>
 
     <link rel="stylesheet" href="lib/css/jquery-ui-1.9.1.custom.min.css" type="text/css"/>
     <link href="lib/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
 </head>
-<body>
+<body ng-app="reportApp">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
 
             <a class="brand" href="index.html">Reports App</a>
-
 
             <ul class="nav">
                 <li><a href="index.html" data-i18n="commons:navbar.home"></a></li>
@@ -60,7 +59,7 @@
                                                                     list="applications" ng-model="applicationName">
                 </label>
                 <datalist id="applications">
-
+                    <option  ng-repeat="app in applications" value="{{app}}"></option>
                 </datalist>
             </div>
             <div class="span4">
@@ -103,22 +102,22 @@
                 <h3 id="myModalLabel">Statistics</h3>
             </div>
             <div class="modal-body">
-                <label>Count elements<input type="text" ng-model="nbElements" disabled></label>
+                <label>Count elements<input type="text" ng-model="stats.nbElements" disabled></label>
                 <label>Start date<input type="text" ng-model="startDate" disabled></label>
                 <label>End date<input type="text" ng-model="endDate" disabled></label>
 
                 <label>Servers</label>
                 <div id="servers" class="well">
-
+                    <li ng-repeat="server in stats.servers">{{server}}</li>
                 </div>
                 <label>Application Server</label>
 
                 <div id="ass" class="well">
-
+                    <li ng-repeat="as in stats.ass">{{as}}</li>
                 </div>
                 <label>DataSources</label>
                 <div id="dataSources" class="well">
-
+                    <li ng-repeat="ds in stats.dataSources">{{ds}}</li>
                 </div>
             </div>
             <div class="modal-footer">
@@ -132,6 +131,7 @@
 <div>
     <footer>
         <p>&copy; Mat 2012</p>
+        <div>version: <span app-version></span></div>
     </footer>
 
 </div>
@@ -141,24 +141,17 @@
 <script src="lib/js/jquery-1.8.2.js"></script>
 <script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
 <script src="lib/js/bootstrap.min.js"></script>
-<script src="lib/js/mustache.js"></script>
 <script src="lib/js/bootbox.min.js"></script>
+
+<!-- angular part-->
 <script src="lib/js/angular.min.js"></script>
 <script src="js/loader.js"></script>
+<script src="js/app.js"></script>
+<script src="js/services.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/directives.js"></script>
 
-<script type="text/x-template" id="options-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
-</script>
 
-<script type="text/x-template" id="list-template">
-    <ul>
-        {{#.}}
-        <li>{{.}}</li>
-        {{/.}}
-    </ul>
-</script>
 
 </body>
 </html>

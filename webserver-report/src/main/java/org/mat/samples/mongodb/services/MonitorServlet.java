@@ -32,8 +32,8 @@ public class MonitorServlet extends HttpServlet {
                 MonitorService.requestMemory(Constants.MEM_FREE, applicationName, server, as, response.getOutputStream());
             } else if ("max-memory".equals(action)) {
                 MonitorService.requestMemory(Constants.MEM_MAX, applicationName, server, as, response.getOutputStream());
-            } else if ("ds-used-connections".equals(action)) {
-                String ds = request.getParameter("dataSource");
+            } else if ("used-connections".equals(action)) {
+                String ds = request.getParameter("idObject");
                 MonitorService.requestUsedConnection(ds, applicationName, server, as, response.getOutputStream());
             } else if ("threads".equals(action)) {
                 MonitorService.requestTotalThreads(applicationName, server, as, response.getOutputStream());

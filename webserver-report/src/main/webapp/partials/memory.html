@@ -1,146 +1,50 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
-<head>
-    <title>Report app</title>
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="lib/css/jquery-ui-1.9.1.custom.min.css" type="text/css"/>
-    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
-</head>
-<body>
-<script src="lib/js/jquery-1.8.2.js"></script>
-<script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
-<script src="lib/js/bootstrap.min.js"></script>
-<div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
+<h2 class="report">JEE Resources - Memory</h2>
 
-            <a class="brand" href="index.html">Reports App</a>
-
-
-            <ul class="nav">
-                <li><a href="index.html" data-i18n="commons:navbar.home"></a></li>
-
-                <li><a href="loader.html">Loading</a></li>
-                <li class="dropdown">
-                    <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown">Reporting<b
-                            class="caret"></b></a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
-                        <li><a tabindex="-1" href="datasource.html">DataSources</a>
-                        </li>
-                        <li><a tabindex="-1" href="memory.html">Memory</a></li>
-                        <li><a tabindex="-1" href="thread.html">Threads</a></li>
-                        <li><a tabindex="-1" href="jms.html">JMS</a></li>
-                    </ul>
-                </li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-
-            <p class="navbar-text pull-right" id="authBox">
-
-            </p>
-
-            <p class="navbar-text pull-right hide" id="loadingIndicator">
-                <img src="img/ajax-loader.gif"/>
-            </p>
-
-            <p class="navbar-text pull-right hide" id="authBox_request">
-                <input class="span2" type="text" id="uid" placeholder="Email">
-                <input class="span2" type="password" id="password" placeholder="Password">
-                <button type="submit" class="btn sign-in" id="signIn" data-i18n="commons:auth.signin"></button>
-            </p>
-            <!--/.nav-collapse -->
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                Filter criteria...
+            </a>
         </div>
-    </div>
-</div>
-
-<div class="container">
-
-    <p>&nbsp;</p><br/>
-
-    <h2 class="report">JEE Resources - Memory</h2>
-
-    <div class="accordion" id="accordion2">
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                    Filter criteria...
-                </a>
-            </div>
-            <div id="collapseOne" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <div class="row">
-                        <div class="span4">
-                            <label for="selApplicationName">Application Name<input type="text" id="selApplicationName"
-                                                                                   list="applications"> </label>
-                            <datalist id="applications">
-                                <option value="SteelUser">
-                            </datalist>
-                        </div>
-                        <div class="span4">
-                            <label for="selAS">AS<input type="text" id="selAS" list="ass"/> </label>
-                            <datalist id="ass">
-                                <option value="AS_STEELUSER">
-                                <option value="AS_STEELUSER_TRAINEE">
-                                <option value="AS_STEELUSER">
-                            </datalist>
-                        </div>
-                    </div>
+        <div id="collapseOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="row">
                     <div class="span4">
-                        <label for="selServer">Servers<input type="text" id="selServer" list="servers"> </label>
-                        <datalist id="servers">
-                            <option value="appcfm51">
-                            <option value="appcfm52">
-                            <option value="appstu52">
+                        <label for="selApplicationName">Application Name<input type="text" id="selApplicationName"
+                                                                               list="applications"> </label>
+                        <datalist id="applications">
+                            <option value="SteelUser">
                         </datalist>
                     </div>
-                    <div class="btn-group">
-                        <input type="button" id="display" class="btn btn-primary" value="Display"/>
-                        <input type="button" id="clear" class="btn" value="Clear"/>
+                    <div class="span4">
+                        <label for="selAS">AS<input type="text" id="selAS" list="ass"/> </label>
+                        <datalist id="ass">
+                            <option value="AS_STEELUSER">
+                            <option value="AS_STEELUSER_TRAINEE">
+                            <option value="AS_STEELUSER">
+                        </datalist>
                     </div>
+                </div>
+                <div class="span4">
+                    <label for="selServer">Servers<input type="text" id="selServer" list="servers"> </label>
+                    <datalist id="servers">
+                        <option value="appcfm51">
+                        <option value="appcfm52">
+                        <option value="appstu52">
+                    </datalist>
+                </div>
+                <div class="btn-group">
+                    <input type="button" id="display" class="btn btn-primary" value="Display"/>
+                    <input type="button" id="clear" class="btn" value="Clear"/>
                 </div>
             </div>
         </div>
     </div>
-    <div id="memoryContainer" style="width:1000px; height:500px">
+</div>
+<div id="memoryContainer" style="width:1000px; height:500px">
 
-    </div>
 </div>
 
-<div>
-    <footer>
-        <p>&copy; Mat 2012</p>
-    </footer>
 
-</div>
-<!-- /container -->
-
-<!-- Le javascript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-
-<script src="lib/js/jquery.json-2.3.js"></script>
-<script src="lib/js/highstock.js"></script>
-<script src="lib/js/highcharts-more.js"></script>
-<script src="lib/js/mustache.js"></script>
-<script type="text/javascript" src="lib/js/themes/gray.js"></script>
-<script src="lib/js/modules/exporting.js"></script>
-<script src="js/utilities.js"></script>
 <script src="js/memory.js"></script>
-
-<script type="text/x-template" id="options-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
-</script>
-
-<script type="text/x-template" id="list-template">
-    <ul>
-        {{#.}}
-        <li>{{.}}</li>
-        {{/.}}
-    </ul>
-</script>
-
-</body>
-</html>

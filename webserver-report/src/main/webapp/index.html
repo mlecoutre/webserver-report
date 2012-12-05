@@ -15,22 +15,20 @@
             <a class="brand" href="index.html">Reports App</a>
 
             <ul class="nav">
-                <li><a href="index.html" data-i18n="commons:navbar.home"></a></li>
+                <li><a href="#/index" data-i18n="commons:navbar.home"></a></li>
 
-                <li><a href="loader.html">Loading</a></li>
+                <li><a href="#/loader">Loading</a></li>
                 <li class="dropdown">
                     <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown">Reporting<b
                             class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
-                        <li><a tabindex="-1" href="datasource.html">DataSources</a>
-                        </li>
-                        <li><a tabindex="-1" href="memory.html">Memory</a></li>
-                        <li><a tabindex="-1" href="thread.html">Threads</a></li>
-                        <li><a tabindex="-1" href="#/files-loader">file loader</a></li>
-                        <li><a tabindex="-1" href="#/sample">sample</a></li>
+                        <li><a tabindex="-1" href="#/datasource">DataSources</a></li>
+                        <li><a tabindex="-1" href="#/memory">Memory</a></li>
+                        <li><a tabindex="-1" href="#/thread">Threads</a></li>
+                        <li><a tabindex="-1" href="#/jms">JMS</a></li>
                     </ul>
                 </li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="#/about">About</a></li>
             </ul>
 
             <p class="navbar-text pull-right" id="authBox">
@@ -53,6 +51,8 @@
 
 <div class="container">
     <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
     <div ng-view></div>
 
 </div>
@@ -61,28 +61,52 @@
 <div>
     <footer>
         <p>&copy; Mat 2012</p>
+
         <div>version: <span app-version></span></div>
     </footer>
 
 </div>
 <!-- /container -->
 
+<script type="text/x-template" id="options-template">
+    {{#.}}
+    <option value="{{.}}"></option>
+    {{/.}}
+</script>
+
+<script type="text/x-template" id="list-template">
+    <ul>
+        {{#.}}
+        <li>{{.}}</li>
+        {{/.}}
+    </ul>
+</script>
+
 
 <script src="lib/js/jquery-1.8.2.js"></script>
 <script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
+<script src="lib/js/jquery.json-2.3.js"></script>
 <script src="lib/js/bootstrap.min.js"></script>
 <script src="lib/js/bootbox.min.js"></script>
+<script src="lib/js/mustache.js"></script>
+<script src="lib/js/highstock.js"></script>
+<script src="lib/js/highcharts-more.js"></script>
+<script src="lib/js/themes/gray.js"></script>
+<script src="lib/js/modules/exporting.js"></script>
+<script src="js/utilities.js"></script>
 
 <!-- angular part-->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
 
 <!-- <script src="lib/js/angular.min.js"></script> -->
-<script src="js/loader.js"></script>
 <script src="js/app.js"></script>
 <script src="js/services.js"></script>
 <script src="js/filters.js"></script>
 <script src="js/directives.js"></script>
 
+<!-- Angular controllers -->
+<script src="js/loader.js"></script>
+<script src="js/jms.js"></script>
 
 
 </body>

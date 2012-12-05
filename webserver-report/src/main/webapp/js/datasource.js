@@ -72,7 +72,7 @@
         var server = $('#selServer').val();
         var dataSource = $('#selDataSource').val();
         var applicationName = $('#selApplicationName').val();
-        addDSChart(chart, 'ds-used-connections', applicationName, server, as, dataSource);
+        addDSChart(chart, 'used-connections', applicationName, server, as, dataSource);
     });
 
     $('#clear').click(function () {
@@ -118,7 +118,7 @@
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as + '&dataSource=' + ds
+            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as + '&idObject=' + ds
 
         });
         reqA.done(function (mem) {

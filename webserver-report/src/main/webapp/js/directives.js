@@ -8,4 +8,11 @@ angular.module('reportApp.directives', []).
     return function(scope, elm, attrs) {
       elm.text(version);
     };
-  }]);
+  }]).directive('ngFocusOut', function() {
+      return function(scope, element, attrs) {
+
+          element.bind('focusout', function(){
+              scope.$eval(attrs.ngFocusOut)
+          });
+      }
+  });

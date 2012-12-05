@@ -18,53 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ *   MonitorService
+ *   @author mlecoutre
  */
 public class MonitorService implements Constants {
-
-    private static MongoListener ml;
-
-    public static void main(String[] args) throws Exception {
-        ml = new MongoListener(MONGO_SERVER, MONGO_PORT, MONGO_DB);
-        ml.contextInitialized(null);
-        purgeDB("SteelUser");
-        loadBatchInsert();
-        // requestUsedConnection("DS_STEELUSER_COLDFUSION", "appcfm51");
-        //requestMemory(MEM_AVAILABLE, "appcfm51", System.out);
-    }
-
-
-    /**
-     *
-     */
-    public static void loadBatchInsert() {
-        String[] files_server1 = new String[]{
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-29",
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-28",
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-27",
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-26",
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-25",
-                "http://appcfm51/log/WebSphere/AppServer/appcfm51Node/AS_STEELUSER/j2eeMonitoring.log"};
-        String[] files_server2 = new String[]{
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-29",
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-28",
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-27",
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-26",
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log.2012-11-25",
-                "http://appcfm52/log/WebSphere/AppServer/appcfm52Node/AS_STEELUSER/j2eeMonitoring.log"
-        };
-        for (int i = 0; i < files_server1.length; i++) {
-            System.out.println("** START " + files_server1[i] + " ** ");
-            batchInsert(files_server1[i], "SteelUser", "appcfm51", "AS_STEELUSER");
-            System.out.println("** END " + files_server1[i] + " ** \n ");
-        }
-
-        for (int i = 0; i < files_server1.length; i++) {
-            System.out.println("** START " + files_server1[i] + " ** ");
-            batchInsert(files_server2[i], "SteelUser", "appcfm52", "AS_STEELUSER");
-            System.out.println("** END " + files_server1[i] + " ** \n ");
-        }
-    }
 
     /**
      * List DataSources
@@ -88,6 +45,31 @@ public class MonitorService implements Constants {
 
         List mList = coll.distinct("id", filter);
         System.out.println("listDataSources: " + mList.size());
+        return mList;
+    }
+
+    /**
+     * List QCFs
+     *
+     * @param applicationName Mongo collection to request
+     * @param serverName      server name
+     * @param asName          AS Name
+     * @return List of dataSources
+     */
+    public static List<String> listQCFs(String applicationName, String serverName, String asName) {
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("type", "was.pool.qcf");
+
+        if (serverName != null)
+            filter.put("server", serverName);
+
+        if (asName != null)
+            filter.put("asName", asName);
+
+        List mList = coll.distinct("id", filter);
+        System.out.println("listQCFs: " + mList.size());
         return mList;
     }
 
@@ -144,8 +126,8 @@ public class MonitorService implements Constants {
      * @param asName          Application server name
      * @param writer          output writer
      * @throws Exception return all error
-     *                   <p/>
-     *                   TODO manage cache or local file storage to avoid to call DB for each request.
+     *
+     *  TODO manage cache or local file storage to avoid to call DB for each request.
      */
     public static void requestMemory(String memory, String applicationName, String serverName, String asName, OutputStream writer) throws Exception {
 
@@ -171,7 +153,7 @@ public class MonitorService implements Constants {
         DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             writer.write("[\n".getBytes());
 
             while (cursor.hasNext()) {
@@ -258,7 +240,7 @@ public class MonitorService implements Constants {
         DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             writer.write("[\n".getBytes());
             while (cursor.hasNext()) {
                 DBObject obj = cursor.next();
@@ -278,7 +260,7 @@ public class MonitorService implements Constants {
     }
 
     /**
-     * Write the used connection of a specific datasource on an output stream
+     * Write the used connection of a specific datasource and QCF on an output stream
      *
      * @param idObject        name of the dataSource
      * @param applicationName Mongo Collection to request
@@ -311,7 +293,7 @@ public class MonitorService implements Constants {
         DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             writer.write("[\n".getBytes());
             while (cursor.hasNext()) {
                 DBObject obj = cursor.next();

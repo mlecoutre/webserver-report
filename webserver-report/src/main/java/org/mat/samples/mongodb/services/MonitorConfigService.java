@@ -31,6 +31,12 @@ public class MonitorConfigService {
     }
 
     @GET
+    @Path("/qcfs/{appliName}/{serverName}/{asName}")
+    public List<String> listQCFs(@PathParam("appliName") String appliName, @PathParam("serverName") String serverName, @PathParam("asName") String asName) {
+        return MonitorService.listQCFs(appliName, serverName, asName);
+    }
+
+    @GET
     @Path("/ass/{appliName}")
     public List<String> listASs(@PathParam("appliName") String appliName) {
         return MonitorService.listASs(appliName);

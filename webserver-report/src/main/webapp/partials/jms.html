@@ -1,0 +1,56 @@
+<h2 class="report">JEE Resources - JMS</h2>
+
+<div class="accordion" id="accordion2" ng-controller="JmsCtrl">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                Filter criteria...
+            </a>
+        </div>
+        <div id="collapseOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="row">
+                    <div class="span4">
+                        <label for="selApplicationName">Application Name<input type="text" id="selApplicationName" ng-model="applicationName"
+                                                                               list="applications" ng-focus-out="doAppFocusOut()"> </label>
+                        <datalist id="applications">
+                            <option ng-repeat="app in applications" value="{{app}}"></option>
+                        </datalist>
+                    </div>
+                    <div class="span4">
+                        <label for="selAS">AS<input type="text" id="selAS" cc list="ass"  ng-model="as" /> </label>
+                        <datalist id="ass">
+                            <option ng-repeat="as in ass" value="{{as}}"></option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <label for="selServer">Servers<input type="text" id="selServer" cc list="servers"   ng-model="server"> </label>
+                        <datalist id="servers">
+                            <option ng-repeat="server in servers" value="{{server}}"></option>
+                        </datalist>
+                    </div>
+                    <div class="span4">
+                        <label class="hide" id="JMSBox" for="selQCF">Queue Connection Factory
+                            <input type="text" id="selQCF" cc  ng-model="qcf" list="qcfs">
+                        </label>
+
+                        <datalist id="qcfs">
+                            <option ng-repeat="qcf in qcfs" value="{{qcf}}"></option>
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <input type="button" id="showQCF" ng-click="showQCF()" class="btn btn-primary" value="Get QCF"/>
+                    <input type="button" id="display" class="btn" ng-click="display()" value="Display"/>
+                    <input type="button" id="clear" class="btn" ng-click="clear()" value="Clear"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="memoryContainer" style="width:1000px; height:500px">
+
+</div>

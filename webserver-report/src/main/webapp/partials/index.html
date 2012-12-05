@@ -1,12 +1,13 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
-
+    <title>Report app</title>
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="lib/css/jquery-ui-1.9.1.custom.min.css" type="text/css"/>
     <link href="lib/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
 </head>
-<body ng-app="reportApp">
+<body>
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
@@ -14,8 +15,9 @@
 
             <a class="brand" href="index.html">Reports App</a>
 
+
             <ul class="nav">
-                <li><a href="index.html" data-i18n="commons:navbar.home"></a></li>
+                <li><a href="/" data-i18n="commons:navbar.home"></a></li>
 
                 <li><a href="loader.html">Loading</a></li>
                 <li class="dropdown">
@@ -26,8 +28,7 @@
                         </li>
                         <li><a tabindex="-1" href="memory.html">Memory</a></li>
                         <li><a tabindex="-1" href="thread.html">Threads</a></li>
-                        <li><a tabindex="-1" href="#/files-loader">file loader</a></li>
-                        <li><a tabindex="-1" href="#/sample">sample</a></li>
+                        <li><a tabindex="-1" href="jms.html">JMS</a></li>
                     </ul>
                 </li>
                 <li><a href="about.html">About</a></li>
@@ -52,38 +53,34 @@
 </div>
 
 <div class="container">
-    <p>&nbsp;</p>
-    <div ng-view></div>
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit index">
+        <h1>Web Server reporting</h1>
 
+        <p>This application allows you to extract information from ServletMonitoring and display it in charts.</p>
+
+        <p><a class="btn btn-primary btn-large" href="about.html" data-i18n="index.learmore"></a></p>
+    </div>
 </div>
-
 
 <div>
     <footer>
         <p>&copy; Mat 2012</p>
-        <div>version: <span app-version></span></div>
     </footer>
 
 </div>
 <!-- /container -->
 
-
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
 <script src="lib/js/jquery-1.8.2.js"></script>
 <script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
 <script src="lib/js/bootstrap.min.js"></script>
-<script src="lib/js/bootbox.min.js"></script>
-
-<!-- angular part-->
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
-
-<!-- <script src="lib/js/angular.min.js"></script> -->
-<script src="js/loader.js"></script>
-<script src="js/app.js"></script>
-<script src="js/services.js"></script>
-<script src="js/filters.js"></script>
-<script src="js/directives.js"></script>
-
-
+<script src="lib/js/jquery.json-2.3.js"></script>
+<script src="lib/js/i18next-1.5.8.min.js"></script>
+<script src="js/utilities.js"></script>
+<script src="js/index.js"></script>
 
 </body>
 </html>

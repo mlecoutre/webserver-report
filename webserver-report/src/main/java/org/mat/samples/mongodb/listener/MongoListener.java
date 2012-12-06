@@ -3,6 +3,8 @@ package org.mat.samples.mongodb.listener;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import org.mat.samples.mongodb.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,6 +22,9 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class MongoListener implements ServletContextListener, Constants {
 
+    private Logger logger = LoggerFactory.getLogger(MongoListener.class);
+
+
     private static DB mongoDB;
     private static Mongo mongo;
 
@@ -29,14 +34,14 @@ public class MongoListener implements ServletContextListener, Constants {
 
 
     public MongoListener() {
-        System.out.println("Initialize connection to mongo DB");
+        logger.info("Initialize connection to mongo DB");
         this.db = MONGO_DB;
         this.server = MONGO_SERVER;
         this.port = MONGO_PORT;
     }
 
     public MongoListener(String server, int port, String db) {
-        System.out.println("Initialize connection to mongo DB with custom parameters");
+        logger.info("Initialize connection to mongo DB with custom parameters");
         this.server = server;
         this.port = port;
         this.db = db;
@@ -48,8 +53,7 @@ public class MongoListener implements ServletContextListener, Constants {
             mongo = new Mongo(server, port);
             mongoDB = mongo.getDB(db);
         } catch (Exception e) {
-            System.err.println("Mongo Listener not correctly initialized");
-            e.printStackTrace();
+            logger.error("Mongo Listener not correctly initialized", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package org.mat.samples.mongodb.services;
 
+import org.mat.samples.mongodb.policy.MonitorPolicy;
 import org.mat.samples.mongodb.vo.ApplicationStats;
 import org.mat.samples.mongodb.vo.HttpFile;
 
@@ -21,31 +22,31 @@ public class MonitorConfigService {
     @GET
     @Path("/applications")
     public Set<String> listApplication() {
-        return MonitorService.listApplications();
+        return MonitorPolicy.listApplications();
     }
 
     @GET
     @Path("/dataSources/{appliName}/{serverName}/{asName}")
     public List<String> listDataSources(@PathParam("appliName") String appliName, @PathParam("serverName") String serverName, @PathParam("asName") String asName) {
-        return MonitorService.listDataSources(appliName, serverName, asName);
+        return MonitorPolicy.listDataSources(appliName, serverName, asName);
     }
 
     @GET
     @Path("/qcfs/{appliName}/{serverName}/{asName}")
     public List<String> listQCFs(@PathParam("appliName") String appliName, @PathParam("serverName") String serverName, @PathParam("asName") String asName) {
-        return MonitorService.listQCFs(appliName, serverName, asName);
+        return MonitorPolicy.listQCFs(appliName, serverName, asName);
     }
 
     @GET
     @Path("/ass/{appliName}")
     public List<String> listASs(@PathParam("appliName") String appliName) {
-        return MonitorService.listASs(appliName);
+        return MonitorPolicy.listASs(appliName);
     }
 
     @GET
     @Path("/servers/{appliName}")
     public List<String> listServers(@PathParam("appliName") String appliName) {
-        return MonitorService.listServers(appliName);
+        return MonitorPolicy.listServers(appliName);
     }
 
     @POST
@@ -57,7 +58,7 @@ public class MonitorConfigService {
             String[] arr = f.getFileName().split("/");
             String asName = arr[arr.length - 2];
             String serverName = arr[2];
-            count = MonitorService.batchInsert(f.getFileName(), applicationName, serverName, asName);
+            count = MonitorPolicy.batchInsert(f.getFileName(), applicationName, serverName, asName);
         }
         return String.format("%d elements stored in the dataStore for the application %s", count, applicationName);
     }
@@ -65,14 +66,14 @@ public class MonitorConfigService {
     @GET
     @Path("/stats/{appliName}")
     public ApplicationStats getStats(@PathParam("appliName") String appliName) {
-        return MonitorService.requestStats(appliName);
+        return MonitorPolicy.requestStats(appliName);
     }
 
     @GET
     @Path("/purge/{appliName}")
     public boolean purge(@PathParam("appliName") String appliName) {
         try {
-            MonitorService.purgeDB(appliName);
+            MonitorPolicy.purgeDB(appliName);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

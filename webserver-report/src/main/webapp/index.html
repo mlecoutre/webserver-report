@@ -17,7 +17,16 @@
             <ul class="nav">
                 <li><a href="#/index" data-i18n="commons:navbar.home"></a></li>
 
-                <li><a href="#/loader">Loading</a></li>
+                <li class="dropdown">
+                    <a href="#" id="drop1" role="button" class="dropdown-toggle" data-toggle="dropdown">Loading<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                        <li><a tabindex="-1" href="#/loader">Manual</a></li>
+                        <li><a tabindex="-1" href="#/scheduler">Scheduler</a></li>
+                    </ul>
+
+                </li>
+
                 <li class="dropdown">
                     <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown">Reporting<b
                             class="caret"></b></a>
@@ -51,6 +60,7 @@
 
 <div class="container">
     <p>&nbsp;</p>
+
     <p>&nbsp;</p>
 
     <div ng-view></div>
@@ -107,6 +117,7 @@
 <!-- Angular controllers -->
 <script src="js/loader.js"></script>
 <script src="js/jms.js"></script>
+<script src="js/scheduler.js"></script>
 
 
 </body>

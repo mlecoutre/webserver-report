@@ -1,19 +1,15 @@
 package org.mat.samples.mongodb.services;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mat.samples.mongodb.listener.MongoListener;
+import org.mat.samples.mongodb.policy.MonitorPolicy;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
@@ -36,18 +32,18 @@ public class MonitorServiceTest {
     @Before
     public void setUp() throws Exception {
         ml.contextInitialized(null);
-        MonitorService.batchInsert(MongoListener.class.getResource(RESOURCE_FILE).toExternalForm(), APPLICATION_NAME, SERVER_NAME, AS_NAME);
+        MonitorPolicy.batchInsert(MongoListener.class.getResource(RESOURCE_FILE).toExternalForm(), APPLICATION_NAME, SERVER_NAME, AS_NAME);
     }
 
     @After
     public void tearDown() throws Exception {
-        MonitorService.purgeDB(APPLICATION_NAME);
+        MonitorPolicy.purgeDB(APPLICATION_NAME);
         ml.contextDestroyed(null);
     }
 
     @Test
     public void testDistinctDataSource() {
-        List<String> mList = MonitorService.listDataSources(APPLICATION_NAME, SERVER_NAME, AS_NAME);
+        List<String> mList = MonitorPolicy.listDataSources(APPLICATION_NAME, SERVER_NAME, AS_NAME);
         System.out.println("testDistinctDataSource : " + mList);
         assertTrue("We should have 11 DS in DB ", mList.size() == 11);
     }
@@ -55,20 +51,20 @@ public class MonitorServiceTest {
     @Test
     public void testRequestUsedConnection() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MonitorService.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        MonitorPolicy.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
         assertNotNull("TotalThreads should not be null", baos.toString());
     }
 
     @Test
     public void testRequestTotalThreads() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MonitorService.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        MonitorPolicy.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
         assertNotNull("TotalThreads should not be null", baos.toString());
     }
 
     @Test
     public void testListServers() {
-        List<String> servers = MonitorService.listServers(APPLICATION_NAME);
+        List<String> servers = MonitorPolicy.listServers(APPLICATION_NAME);
         System.out.println("servers: " + servers.size());
         assertTrue("We should have only one server appcfm51", servers.size() == 1);
         assertEquals("Server should be appcfm51", servers.get(0), "appcfm51");
@@ -76,7 +72,7 @@ public class MonitorServiceTest {
 
     @Test
     public void testListASs() {
-        List<String> ass = MonitorService.listASs(APPLICATION_NAME);
+        List<String> ass = MonitorPolicy.listASs(APPLICATION_NAME);
         System.out.println("ass: " + ass.size());
         assertTrue("We should have only one AS", ass.size() == 1);
         assertEquals("AS should be AS_STEELUSER", ass.get(0), "AS_STEELUSER");
@@ -90,7 +86,7 @@ public class MonitorServiceTest {
 
     @Test
     public void testListApplications() {
-        Set<String> applications = MonitorService.listApplications();
+        Set<String> applications = MonitorPolicy.listApplications();
         String applicationName = (String) applications.toArray()[0];
         System.out.println("testListApplications: " + applicationName);
         // we have SteelUserTest

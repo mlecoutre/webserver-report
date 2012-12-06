@@ -1,10 +1,12 @@
-package org.mat.samples.mongodb.services;
+package org.mat.samples.mongodb.policy;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
 import org.mat.samples.mongodb.vo.ApplicationStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +15,17 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- *   MonitorService
- *   @author mlecoutre
+ * MonitorPolicy
+ *
+ * @author mlecoutre
  */
-public class MonitorService implements Constants {
+public class MonitorPolicy implements Constants {
+
+    private static Logger logger = LoggerFactory.getLogger(MonitorPolicy.class);
 
     /**
      * List DataSources
@@ -44,7 +48,7 @@ public class MonitorService implements Constants {
             filter.put("asName", asName);
 
         List mList = coll.distinct("id", filter);
-        System.out.println("listDataSources: " + mList.size());
+        logger.info("listDataSources: " + mList.size());
         return mList;
     }
 
@@ -69,7 +73,7 @@ public class MonitorService implements Constants {
             filter.put("asName", asName);
 
         List mList = coll.distinct("id", filter);
-        System.out.println("listQCFs: " + mList.size());
+        logger.info("listQCFs: " + mList.size());
         return mList;
     }
 
@@ -85,7 +89,7 @@ public class MonitorService implements Constants {
         DBCollection coll = db.getCollection(applicationName);
 
         List mList = coll.distinct("asName");
-        System.out.println("listASs: " + mList.size());
+        logger.info("listASs: " + mList.size());
         return mList;
     }
 
@@ -100,7 +104,7 @@ public class MonitorService implements Constants {
         DBCollection coll = db.getCollection(applicationName);
 
         List mList = coll.distinct("server");
-        System.out.println("listServers: " + mList.size());
+        logger.info("listServers: " + mList.size());
         return mList;
     }
 
@@ -126,8 +130,8 @@ public class MonitorService implements Constants {
      * @param asName          Application server name
      * @param writer          output writer
      * @throws Exception return all error
-     *
-     *  TODO manage cache or local file storage to avoid to call DB for each request.
+     *                   <p/>
+     *                   TODO manage cache or local file storage to avoid to call DB for each request.
      */
     public static void requestMemory(String memory, String applicationName, String serverName, String asName, OutputStream writer) throws Exception {
 
@@ -180,9 +184,9 @@ public class MonitorService implements Constants {
     public static void purgeDB(String applicationName) throws Exception {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
-        System.out.println("Nb elements before: " + coll.count());
+        logger.info("Nb elements before: " + coll.count());
         coll.drop();
-        System.out.println("Nb elements after: " + coll.count());
+        logger.info("Nb elements after: " + coll.count());
     }
 
 
@@ -342,7 +346,7 @@ public class MonitorService implements Constants {
             nbElts = coll.count();
 
         } catch (IOException ioe) {
-            System.out.println("Ouch - a FileNotFoundException happened.");
+            logger.info("Ouch - a FileNotFoundException happened.");
             ioe.printStackTrace();
             System.exit(1);
         } finally {

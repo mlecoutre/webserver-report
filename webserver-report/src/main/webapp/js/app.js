@@ -9,6 +9,7 @@ angular.module('reportApp', ['reportApp.filters', 'reportApp.services', 'reportA
          templateUrl: 'partials/loader.html',
          controller: LoaderCtrl
         }).
+        when('/scheduler', {templateUrl: 'partials/scheduler.html', controller: SchedulerCtrl}).
         when('/index', {templateUrl: 'partials/index.html'}).
         when('/about', {templateUrl: 'partials/about.html'}).
         when('/memory', {templateUrl: 'partials/memory.html'}).

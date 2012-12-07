@@ -336,7 +336,7 @@ public class MonitorPolicy implements Constants {
             String line = null;
             DB db = MongoListener.getMongoDB();
             DBCollection coll = db.getCollection(applicationName);
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line= bufferedReader.readLine()) != null) {
 
                 DBObject doc = (DBObject) JSON.parse(line);
                 doc.put("server", serverName);
@@ -348,7 +348,6 @@ public class MonitorPolicy implements Constants {
         } catch (IOException ioe) {
             logger.info("Ouch - a FileNotFoundException happened.");
             ioe.printStackTrace();
-            System.exit(1);
         } finally {
             if (bufferedReader != null) {
                 try {

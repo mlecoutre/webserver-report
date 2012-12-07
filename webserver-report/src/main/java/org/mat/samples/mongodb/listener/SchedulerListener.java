@@ -1,18 +1,16 @@
 package org.mat.samples.mongodb.listener;
 
 
-import com.mongodb.DB;
-import com.mongodb.Mongo;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
 import org.mat.samples.mongodb.Constants;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 /**
  * @author mlecoutre
@@ -29,7 +27,6 @@ public class SchedulerListener implements ServletContextListener, Constants {
         logger.info("Start Job Scheduling");
 
     }
-
 
     @Override
     public void contextInitialized(ServletContextEvent event) {

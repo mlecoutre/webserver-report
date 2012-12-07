@@ -1,11 +1,24 @@
 package org.mat.samples.mongodb.policy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Created with IntelliJ IDEA.
- * User: E010925
- * Date: 06/12/12
- * Time: 09:23
- * To change this template use File | Settings | File Templates.
+ * SchedulerPolicy
+ * 
+ * @author vincentClaeysen
  */
 public class SchedulerPolicy {
+	
+	private static Logger logger = LoggerFactory.getLogger(SchedulerPolicy.class);
+
+	private SchedulerPolicy() {
+		super();
+	}
+	
+	
+	
+	
+	
 }
+

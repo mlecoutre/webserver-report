@@ -41,7 +41,7 @@ public class MongoListener implements ServletContextListener, Constants {
     }
 
     public MongoListener(String server, int port, String db) {
-        logger.info("Initialize connection to mongo DB with custom parameters");
+        logger.info("Initialize connection to Mongo DB with custom parameters");
         this.server = server;
         this.port = port;
         this.db = db;

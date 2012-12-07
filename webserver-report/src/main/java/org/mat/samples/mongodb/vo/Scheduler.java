@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.mat.samples.mongodb.Constants;
+
 /**
  * User: mlecoutre Date: 07/12/12 Time: 10:25
  */
@@ -15,6 +17,8 @@ public class Scheduler implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private transient String _id = null;
+
 	private String applicationName = null;
 	private String serverName = null;
 	private String asName = null;
@@ -22,13 +26,21 @@ public class Scheduler implements Serializable {
 	private int requestRepeatIntervalInMinutes = 5;
 	private int maxHistoryToKeepInDays = 31 * 6;
 
-	private SchedulerState initialState = SchedulerState.STARTED;
-	private SchedulerState state = SchedulerState.STARTED;
+	private String initialState = Constants.STATUS_RUNNING;
+	private String state = Constants.STATUS_RUNNING;
 
 	private String endPointURL = null;
 
 	public Scheduler() {
 		super();
+	}
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 
 	public String getApplicationName() {
@@ -72,19 +84,21 @@ public class Scheduler implements Serializable {
 		this.maxHistoryToKeepInDays = maxHistoryToKeepInDays;
 	}
 
-	public SchedulerState getInitialState() {
+	
+
+	public String getInitialState() {
 		return initialState;
 	}
 
-	public void setInitialState(SchedulerState initialState) {
+	public void setInitialState(String initialState) {
 		this.initialState = initialState;
 	}
 
-	public SchedulerState getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(SchedulerState state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
@@ -99,7 +113,8 @@ public class Scheduler implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Scheduler [applicationName=").append(applicationName)
+		builder.append("Scheduler [_id=").append(_id)
+				.append(", applicationName=").append(applicationName)
 				.append(", serverName=").append(serverName).append(", asName=")
 				.append(asName).append(", requestRepeatIntervalInMinutes=")
 				.append(requestRepeatIntervalInMinutes)
@@ -111,10 +126,10 @@ public class Scheduler implements Serializable {
 	}
 
 	// check if the scheduler is stopped
-	public boolean isStopped() {
-		
-		boolean stopped = SchedulerState.STOPPED.getState()
-				.equals(this.state.getState());
+	public boolean stateStopped() {
+
+		boolean stopped = Constants.STATUS_STOPPED.equals(
+				this.state);
 		return stopped;
 	}
 

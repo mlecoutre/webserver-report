@@ -25,7 +25,7 @@ public class MonitorJob implements Job{
         Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
 				.getJobDataMap().get(Scheduler.class.getSimpleName());
         
-        if (scheduler.isStopped()) 
+        if (scheduler.stateStopped()) 
         	return;
 		
 		batchInsert(scheduler.getEndPointURL(), scheduler.getApplicationName(),

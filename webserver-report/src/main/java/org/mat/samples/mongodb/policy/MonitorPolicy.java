@@ -1,22 +1,24 @@
 package org.mat.samples.mongodb.policy;
 
-import com.mongodb.*;
-import com.mongodb.util.JSON;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Set;
+
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
+import org.mat.samples.mongodb.utils.HTTPUtils;
 import org.mat.samples.mongodb.vo.ApplicationStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Set;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 /**
  * MonitorPolicy
@@ -117,7 +119,8 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         Set<String> collections = db.getCollectionNames();
         //remove the technical system.indexes from the list of applications;
-        collections.remove("system.indexes");
+        collections.remove(SYSTEM_INDEXES_COLLECTION);
+        collections.remove(SCHEDULER_CONFIG_COLLECTION);
         return collections;
     }
 
@@ -325,38 +328,32 @@ public class MonitorPolicy implements Constants {
      * @param asName          AS name
      */
     public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) {
-        URL u;
-        BufferedReader bufferedReader = null;
         long nbElts = 0;
+		try {
 
-        try {
-            u = new URL(strUrl);
-            URLConnection yc = u.openConnection();
-            bufferedReader = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            String line = null;
-            DB db = MongoListener.getMongoDB();
-            DBCollection coll = db.getCollection(applicationName);
-            while ((line= bufferedReader.readLine()) != null) {
+			List<String> rows = HTTPUtils.loadURLAsRows(strUrl);
+			if ((null != rows) && (!rows.isEmpty())) {
+				DB db = MongoListener.getMongoDB();
+				DBCollection coll = db.getCollection(applicationName);
 
-                DBObject doc = (DBObject) JSON.parse(line);
-                doc.put("server", serverName);
-                doc.put("asName", asName);
-                coll.insert(doc);
-            }
-            nbElts = coll.count();
+				for (String row : rows) {
 
-        } catch (IOException ioe) {
-            logger.info("Ouch - a FileNotFoundException happened.");
-            ioe.printStackTrace();
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (Exception e) {
-                    //
-                }
-            }
-        }
-        return nbElts;
+					DBObject doc = (DBObject) JSON.parse(row);
+					doc.put("server", serverName);
+					doc.put("asName", asName);
+					coll.insert(doc);
+
+				}
+
+				nbElts = coll.count();
+			}
+
+		} catch (IOException ioe) {
+			System.out.println("Ouch - a FileNotFoundException happened.");
+			ioe.printStackTrace();
+			System.exit(1);
+		}
+		return nbElts;
+        
     }
 }

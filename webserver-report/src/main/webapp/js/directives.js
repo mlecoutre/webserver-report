@@ -4,15 +4,26 @@
 
 
 angular.module('reportApp.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
+directive('appVersion', ['version', function (version) {
+    return function (scope, elm, attrs) {
+        elm.text(version);
     };
-  }]).directive('ngFocusOut', function() {
-      return function(scope, element, attrs) {
+}]).directive('ngFocusOut', function () {
+    return function (scope, element, attrs) {
 
-          element.bind('focusout', function(){
-              scope.$eval(attrs.ngFocusOut)
-          });
-      }
-  });
+        element.bind('focusout', function () {
+            scope.$eval(attrs.ngFocusOut)
+        });
+    }
+}).directive('ngShowTab',
+
+function () {
+    return {
+        link: function (scope, element, attrs) {
+            element.click(function (e) {
+                e.preventDefault();
+                $(element).tab('show');
+            });
+        }
+    };
+});

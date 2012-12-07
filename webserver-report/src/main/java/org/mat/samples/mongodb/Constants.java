@@ -8,7 +8,7 @@ package org.mat.samples.mongodb;
 public interface Constants {
 
 
-    public static final String MONGO_SERVER = "dun-tst-devf01";
+    public static final String MONGO_SERVER = "dun-tst-devf01"; //"dun-tst-devf01";
     public static final int MONGO_PORT = 27017;
     public static final String MONGO_DB = "mydb";
 
@@ -19,5 +19,8 @@ public interface Constants {
     public static final String MEM_TOTAL = "total_memory";
     public static final String MEM_AVAILABLE = "available_memory";
     public static final String THREADS = "total_threads";
+
+    public static final String STATUS_RUNNING = "running";
+    public static final String STATUS_STOPPED = "stopped";
 
 }

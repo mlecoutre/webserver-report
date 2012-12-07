@@ -1,40 +1,59 @@
 <h2>Scheduling</h2>
 
-<div class="well">
-    <form>
-        <label>Application Name <input type="text" ng-model="applicationName"></label>
-        <label>AS<input type="text" ng-model="as"></label>
-        <label>Monitoring Servlet URL<input type="text" ng-model="url"></label>
-        <label>Interval: {{interval}}
-            <input type="range" min="2" max="60" step="2" value="10" ng-model="interval">
+<div class="tabbable tabs-left" style="width:90%" ng-controller="SchedulerCtrl">
+    <ul class="nav nav-tabs  report" id="reportTab">
+        <li><a ng-show-tab="" href="#listSchedulers">Schedulers</a></li>
+        <li><a ng-show-tab="" href="#addScheduler">Create</a></li>
+    </ul>
 
-        </label>
-        <input type="button" ng-click="add()" value="Add" class="btn btn-primary"/>
-    </form>
+    <div class="tab-content">
 
-    <legend>List of applications</legend>
-    <table class="table table-striped last5-template" id="lastAppointments">
-        <thead>
-        <tr>
-            <th>Applications</th>
-            <th>AS</th>
-            <th>interval</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
 
-        <tr>
-            <td>...</td>
-            <td>...</td>
-            <td>...</td>
-            <td>...</td>
-            <td><a class="edit"  href="#"><i class="icon-edit"></i></a>
-                <a class="del" href="#"><i class="icon-trash"></i></a></td>
-        </tr>
+        <div class="tab-pane active" id="listSchedulers">
 
-        </tbody>
-    </table>
+            <legend>List of applications</legend>
+            <table class="table table-striped last5-template" id="lastAppointments">
+                <thead>
+                <tr>
+                    <th>Applications</th>
+                    <th>AS</th>
+                    <th>interval</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
 
+                <tr ng-repeat="scheduler in schedulers">
+                    <td>{{scheduler.applicationName}}</td>
+                    <td>{{scheduler.as}}</td>
+                    <td>{{scheduler.interval}}</td>
+                    <td>{{scheduler.status}}</td>
+                    <td><a class="edit" href="#"><i class="icon-edit"></i></a>
+                        <a class="del" href="#"><i class="icon-trash"></i></a></td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="tab-pane" id="addScheduler">
+
+            <div class="well">
+                <form>
+                    <label>Application Name <input type="text" ng-model="applicationName"></label>
+                    <label>AS<input type="text" ng-model="as"></label>
+                    <label>Monitoring Servlet URL<input type="text" ng-model="url"></label>
+                    <label>Interval: {{interval}} mn
+                        <input type="range" min="2" max="60" step="2" value="10" ng-model="interval">
+
+                    </label>
+                    <input type="button" ng-click="add()" value="Add" class="btn btn-primary"/>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
 </div>

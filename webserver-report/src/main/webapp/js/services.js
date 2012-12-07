@@ -138,5 +138,38 @@ angular.module('reportApp.services', [])
     }
     // the Factory return an instance of the applicationService
     return new ApplicationService($http, $q);
+}]).factory('schedulerService', ['$http', '$q', function ($http, $q) {
+
+    // Create the application service
+    function SchedulerService($http, $q) {
+         this.listSchedulers = function(){
+            console.log("listScheduler service");
+
+            schedulers =   [
+                                 {
+                                     applicationName : "SteelUser",
+                                     as              : "AS_STEELUSER",
+                                     interval        : 20,
+                                     status          : "running"
+                                 },
+                                 {
+                                      applicationName : "SteelUser",
+                                      as              : "AS_STEELUSER_BETA",
+                                      interval        : 15,
+                                      status          : "stopped"
+                                 }
+
+                            ];
+            return schedulers;
+         }
+
+         this.addScheduler = function(){
+            console.log("addScheduler service");
+            return true;
+         }
+    }
+
+    // return instance of Scheduler service
+    return new SchedulerService($http, $q);
 }]).
 value('version', '1.0.0');

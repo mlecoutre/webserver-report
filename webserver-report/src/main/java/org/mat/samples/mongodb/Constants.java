@@ -13,6 +13,9 @@ public interface Constants {
     public static final String MONGO_DB = "mydb";
 
     public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
+    
+    public static final String SCHEDULER_CONFIG_COLLECTION = "scheduler-config";
+    public static final String SYSTEM_INDEXES_COLLECTION = "system.indexes";
 
     public static final String MEM_FREE = "free_memory";
     public static final String MEM_MAX = "max_memory";

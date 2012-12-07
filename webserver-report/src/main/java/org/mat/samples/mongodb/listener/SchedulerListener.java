@@ -21,7 +21,7 @@ public class SchedulerListener implements ServletContextListener, Constants {
     private Logger logger = LoggerFactory.getLogger(SchedulerListener.class);
     // Grab the Scheduler instance from the Factory
 
-    private Scheduler scheduler;
+    private static Scheduler scheduler;
 
     public SchedulerListener() {
         logger.info("Start Job Scheduling");
@@ -51,6 +51,13 @@ public class SchedulerListener implements ServletContextListener, Constants {
             logger.error("Error during Scheduler shutdown", e);
         }
     }
+
+    // make available scheduler
+	public static Scheduler getScheduler() {
+		return scheduler;
+	}
+    
+    
 
 
 }

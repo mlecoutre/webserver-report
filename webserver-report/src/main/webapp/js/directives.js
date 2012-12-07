@@ -10,14 +10,11 @@ directive('appVersion', ['version', function (version) {
     };
 }]).directive('ngFocusOut', function () {
     return function (scope, element, attrs) {
-
         element.bind('focusout', function () {
             scope.$eval(attrs.ngFocusOut)
         });
     }
-}).directive('ngShowTab',
-
-function () {
+}).directive('ngShowTab', function () {
     return {
         link: function (scope, element, attrs) {
             element.click(function (e) {

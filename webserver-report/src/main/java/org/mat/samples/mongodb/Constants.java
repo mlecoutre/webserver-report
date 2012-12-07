@@ -23,7 +23,5 @@ public interface Constants {
     public static final String MEM_AVAILABLE = "available_memory";
     public static final String THREADS = "total_threads";
 
-    public static final String STATUS_RUNNING = "running";
-    public static final String STATUS_STOPPED = "stopped";
 
 }

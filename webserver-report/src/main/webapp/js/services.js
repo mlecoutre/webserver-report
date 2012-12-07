@@ -145,14 +145,16 @@ angular.module('reportApp.services', [])
          this.listSchedulers = function(){
             console.log("listScheduler service");
 
-            schedulers =   [
+            var schedulers =   [
                                  {
+                                     schedulerId     : "m1",
                                      applicationName : "SteelUser",
                                      as              : "AS_STEELUSER",
                                      interval        : 20,
                                      status          : "running"
                                  },
                                  {
+                                      schedulerId     : "m2",
                                       applicationName : "SteelUser",
                                       as              : "AS_STEELUSER_BETA",
                                       interval        : 15,
@@ -163,7 +165,17 @@ angular.module('reportApp.services', [])
             return schedulers;
          }
 
-         this.addScheduler = function(){
+         this.updateScheduler(scheduler){
+            console.log("update scheduler");
+            return true;
+         }
+
+         this.deleteScheduler(schedulerId){
+               console.log("delete schedulerService: "+schedulerId);
+               return true;
+         }
+
+         this.addScheduler = function(scheduler){
             console.log("addScheduler service");
             return true;
          }

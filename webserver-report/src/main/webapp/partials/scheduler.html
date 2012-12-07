@@ -23,16 +23,14 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 <tr ng-repeat="scheduler in schedulers">
                     <td>{{scheduler.applicationName}}</td>
                     <td>{{scheduler.as}}</td>
                     <td>{{scheduler.interval}}</td>
                     <td>{{scheduler.status}}</td>
-                    <td><a class="edit" href="#"><i class="icon-edit"></i></a>
-                        <a class="del" href="#"><i class="icon-trash"></i></a></td>
+                    <td><a class="edit" data-target="" href="#"><i class="icon-edit"></i></a>
+                        <a class="del" data-target="{{scheduler.schedulerId}}" ng-click="deleteScheduler(scheduler.schedulerId)" href="#"><i class="icon-trash"></i></a></td>
                 </tr>
-
                 </tbody>
             </table>
 
@@ -49,7 +47,7 @@
                         <input type="range" min="2" max="60" step="2" value="10" ng-model="interval">
 
                     </label>
-                    <input type="button" ng-click="add()" value="Add" class="btn btn-primary"/>
+                    <input type="button" ng-click="addScheduler()" value="Add" class="btn btn-primary"/>
                 </form>
 
             </div>

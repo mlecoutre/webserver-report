@@ -1,10 +1,16 @@
 package org.mat.samples.mongodb.services;
 
-import org.mat.samples.mongodb.vo.Scheduler;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.mat.samples.mongodb.policy.SchedulerPolicy;
+import org.mat.samples.mongodb.vo.Scheduler;
 
 /**
  * User: E010925
@@ -17,15 +23,14 @@ public class SchedulerService {
 
     @GET
     public List<Scheduler> listSchedulers(){
-        List<Scheduler> schedulers = null;
-
+        List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
         return schedulers;
     }
 
     @POST
     public String addScheduler(Scheduler scheduler){
-
-        return "schedulerId";
+    	String schedulerId = SchedulerPolicy.addScheduler(scheduler);
+    	return schedulerId;
     }
 
     /**
@@ -38,7 +43,7 @@ public class SchedulerService {
     @POST
     @Path("/{schedulerId}")
     public boolean updateScheduler(Scheduler scheduler, @PathParam("schedulerId") String schedulerId){
-
-        return true;
+    	boolean done = SchedulerPolicy.updateScheduler(schedulerId, scheduler);
+        return done;
     }
 }

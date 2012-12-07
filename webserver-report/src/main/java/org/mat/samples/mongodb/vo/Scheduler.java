@@ -10,10 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Scheduler implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
+    private String schedulerId;
 
 	private String applicationName = null;
 	private String serverName = null;
@@ -31,7 +30,16 @@ public class Scheduler implements Serializable {
 		super();
 	}
 
-	public String getApplicationName() {
+    public Scheduler(String schedulerId, String applicationName, String serverName, String asName, String endPointURL, int requestRepeatIntervalInMinutes) {
+        this.schedulerId = schedulerId;
+        this.applicationName = applicationName;
+        this.serverName = serverName;
+        this.asName = asName;
+        this.endPointURL = endPointURL;
+        this.requestRepeatIntervalInMinutes = requestRepeatIntervalInMinutes;
+    }
+
+    public String getApplicationName() {
 		return applicationName;
 	}
 
@@ -118,4 +126,12 @@ public class Scheduler implements Serializable {
 		return stopped;
 	}
 
+
+    public String getSchedulerId() {
+        return schedulerId;
+    }
+
+    public void setSchedulerId(String schedulerId) {
+        this.schedulerId = schedulerId;
+    }
 }

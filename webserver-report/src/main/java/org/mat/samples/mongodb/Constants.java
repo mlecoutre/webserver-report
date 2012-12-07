@@ -8,7 +8,7 @@ package org.mat.samples.mongodb;
 public interface Constants {
 
 
-    public static final String MONGO_SERVER = "dun-tst-devf01"; //"dun-tst-devf01";
+    public static final String MONGO_SERVER = "localhost"; //"dun-tst-devf01";
     public static final int MONGO_PORT = 27017;
     public static final String MONGO_DB = "mydb";
 

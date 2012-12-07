@@ -117,7 +117,8 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         Set<String> collections = db.getCollectionNames();
         //remove the technical system.indexes from the list of applications;
-        collections.remove("system.indexes");
+        collections.remove(SYSTEM_INDEXES_COLLECTION);
+        collections.remove(SCHEDULER_CONFIG_COLLECTION);
         return collections;
     }
 

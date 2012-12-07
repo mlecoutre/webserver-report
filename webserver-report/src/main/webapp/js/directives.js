@@ -23,4 +23,13 @@ directive('appVersion', ['version', function (version) {
             });
         }
     };
+}).directive('ngTableAction', function () {
+      return {
+          link: function (scope, element, attrs) {
+              element.click(function (e) {
+                  e.preventDefault();
+                  scope.$eval(attrs.ngTableAction)
+              });
+          }
+      };
 });

@@ -19,7 +19,7 @@ import java.util.Set;
  * Time: 14:56
  */
 public class MonitorServiceTest {
-    private static final String MONGO_SERVER = "localhost";
+    private static final String MONGO_SERVER = "dun-tst-devf01";
     private static final int MONGO_PORT = 27017;
     private static final String MONGO_DB = "mydbTest";
     private static final String RESOURCE_FILE = "/j2eeMonitoring.log";

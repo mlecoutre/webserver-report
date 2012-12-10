@@ -186,6 +186,7 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
         logger.info("Nb elements before: " + coll.count());
+        //db.dropDatabase();
         coll.drop();
         logger.info("Nb elements after: " + coll.count());
     }
@@ -337,7 +338,7 @@ public class MonitorPolicy implements Constants {
             String line = null;
             DB db = MongoListener.getMongoDB();
             DBCollection coll = db.getCollection(applicationName);
-            while ((line= bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
 
                 DBObject doc = (DBObject) JSON.parse(line);
                 doc.put("server", serverName);

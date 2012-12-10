@@ -33,16 +33,21 @@ public class SchedulerListener implements ServletContextListener, Constants {
     private static Scheduler scheduler;
 
     public SchedulerListener() {
-        logger.info("Start Job Scheduling");
-
     }
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try {
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
-            scheduler.start();
-            SchedulerPolicy.initSchedulers();
+            String isDisable = System.getProperty("DISABLE_SCHEDULER");
+            if ("true".equalsIgnoreCase(isDisable)) {
+                logger.warn("WARNING: SCHEDULER ARE DISABLED");
+            } else {
+                logger.warn(" STARTING SCHEDULER");
+                scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+                scheduler.start();
+                SchedulerPolicy.initSchedulers();
+            }
         } catch (SchedulerException e) {
             logger.error("Error during Scheduler initialization", e);
         }
@@ -63,37 +68,35 @@ public class SchedulerListener implements ServletContextListener, Constants {
     }
 
     public static void schedule(org.mat.samples.mongodb.vo.Scheduler aScheduler) throws SchedulerException {
-		
-    	if (null == scheduler)
-    		return;
-    	
-    	JobDataMap dataMap = new JobDataMap();
-		dataMap.put(org.mat.samples.mongodb.vo.Scheduler.class.getSimpleName(), aScheduler);
-		
-		// define the job and tie it to our HelloJob class
-		String groupName = aScheduler.getApplicationName()+ "/" + aScheduler.getServerName();
-		String jobName = groupName + "/" + aScheduler.getAsName();
-		
-		JobDetail job = newJob(MonitorJob.class)
-		    .withIdentity(jobName, groupName)
-		    .usingJobData(dataMap)
-		    .build();
-			    
-		Trigger trigger = newTrigger()
-			//.withIdentity("", "")
-			.startNow()
-			.withSchedule(simpleSchedule().withIntervalInMinutes(aScheduler.getRequestRepeatIntervalInMinutes()).repeatForever())
-			.build(); 
-		
-		scheduler.scheduleJob(job, trigger);
-	}
 
-	// make available scheduler
-	public static Scheduler getScheduler() {
-		return scheduler;
-	}
-    
-    
+        if (null == scheduler)
+            return;
+
+        JobDataMap dataMap = new JobDataMap();
+        dataMap.put(org.mat.samples.mongodb.vo.Scheduler.class.getSimpleName(), aScheduler);
+
+        // define the job and tie it to our HelloJob class
+        String groupName = aScheduler.getApplicationName() + "/" + aScheduler.getServerName();
+        String jobName = groupName + "/" + aScheduler.getAsName();
+
+        JobDetail job = newJob(MonitorJob.class)
+                .withIdentity(jobName, groupName)
+                .usingJobData(dataMap)
+                .build();
+
+        Trigger trigger = newTrigger()
+                //.withIdentity("", "")
+                .startNow()
+                .withSchedule(simpleSchedule().withIntervalInMinutes(aScheduler.getRequestRepeatIntervalInMinutes()).repeatForever())
+                .build();
+
+        scheduler.scheduleJob(job, trigger);
+    }
+
+    // make available scheduler
+    public static Scheduler getScheduler() {
+        return scheduler;
+    }
 
 
 }

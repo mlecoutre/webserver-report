@@ -2,8 +2,8 @@
 
 <div class="tabbable tabs-left" style="width:90%" ng-controller="SchedulerCtrl">
     <ul class="nav nav-tabs  report" id="reportTab">
-        <li class="active"><a ng-show-tab="" href="#listSchedulers">Schedulers</a></li>
-        <li><a ng-show-tab="" href="#editScheduler">Edition</a></li>
+        <li class="active"><a id="titleList" ng-show-tab="" href="#listSchedulers">Schedulers</a></li>
+        <li><a ng-show-tab="" id="titleEdit" href="#editScheduler">Edition</a></li>
     </ul>
 
     <div class="tab-content">
@@ -30,8 +30,9 @@
                     <td>{{scheduler.asName}}</td>
                     <td>{{scheduler.requestRepeatIntervalInMinutes}}</td>
                     <td>{{scheduler.state}}</td>
-                    <td><a class="edit" ng-table-action="editScheduler(scheduler.schedulerId)" ><i class="icon-edit"></i></a>
-                        <a class="del"  ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i class="icon-trash"></i></a></td>
+                    <td><a class="edit" ng-table-action="editScheduler(scheduler.schedulerId)"><i class="icon-edit"></i></a>
+                        <a class="del" ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i
+                                class="icon-trash"></i></a></td>
                 </tr>
                 </tbody>
             </table>
@@ -42,15 +43,23 @@
 
             <div class="well">
                 <form>
+                    <p>{{schedulerId}}</p>
                     <label>Application Name <input type="text" ng-model="applicationName" required></label>
                     <label>AS<input type="text" ng-model="asName" required></label>
                     <label>Server<input type="text" ng-model="serverName" required></label>
                     <label>Monitoring Servlet URL<input type="text" ng-model="endPointURL" required></label>
                     <label>Interval: {{requestRepeatIntervalInMinutes}} mn
-                        <input type="range" min="2" max="60" step="2" value="10" ng-model="requestRepeatIntervalInMinutes">
+                        <input type="range" min="2" max="60" step="2" value="10"
+                               ng-model="requestRepeatIntervalInMinutes">
 
                     </label>
-                    <input type="button" ng-click="addScheduler()" value="Add" class="btn btn-primary"/>
+
+                    <div class="btn-group">
+                        <input id="addScheduler" type="button" ng-click="addScheduler()" value="Add" class="btn btn-primary"/>
+                        <input id="updateScheduler" type="button" ng-click="updateScheduler()" value="Update" class="btn btn-primary hide"/>
+                        <input type="reset" id="reset" value="Clear" class="btn"/>
+                        <input type="button" id="cancel" ng-click="cancel()" value="Cancel" class="btn"/>
+                    </div>
                 </form>
 
             </div>

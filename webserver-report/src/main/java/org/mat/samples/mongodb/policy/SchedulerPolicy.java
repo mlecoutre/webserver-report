@@ -3,6 +3,7 @@ package org.mat.samples.mongodb.policy;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 import org.apache.commons.beanutils.BeanUtils;
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class SchedulerPolicy implements Constants {
         super();
     }
 
-    private static DBCollection giveCollection() {
+    public static DBCollection giveCollection() {
         DB db = MongoListener.getMongoDB();
         return db.getCollection(SCHEDULER_CONFIG_COLLECTION);
     }
@@ -64,6 +66,46 @@ public class SchedulerPolicy implements Constants {
         }
     }
 
+    /**
+     * find Scheduler By Id
+     *
+     * @param schedulerId id of the scheduler to get back
+     * @return Scheduler
+     */
+    public static Scheduler findSchedulerById(String schedulerId) {
+        Scheduler scheduler = null;
+        DBCollection collection = giveCollection();
+        DBObject filter = new BasicDBObject();
+
+        filter.put("_id", new ObjectId(schedulerId));
+        DBObject obj = collection.findOne(filter);
+        try {
+            scheduler = wrapDBObjectToScheduler(obj);
+        } catch (IllegalAccessException e) {
+            logger.error("IllegalAccessException", e);
+        } catch (InvocationTargetException e) {
+            logger.error("IllegalAccessException", e);
+        }
+        return scheduler;
+    }
+
+    /**
+     * Delete Scheduler By Id
+     *
+     * @param schedulerId scheduler identifier to delete
+     * @return boolean
+     */
+    public static boolean deleteSchedulerById(String schedulerId) {
+        logger.info(String.format("deleteSchedulerById %s", schedulerId));
+        DBCollection collection = giveCollection();
+        DBObject filter = new BasicDBObject();
+
+        filter.put("_id", new ObjectId(schedulerId));
+        DBObject obj = collection.findOne(filter);
+        collection.remove(obj);
+        return true;
+    }
+
     public static List<Scheduler> listSchedulers() {
 
         DBCollection collection = giveCollection();
@@ -79,12 +121,7 @@ public class SchedulerPolicy implements Constants {
         try {
 
             while (cursor.hasNext()) {
-                DBObject dbObj = cursor.next();
-
-                Map<?, ?> map = dbObj.toMap();
-                Scheduler scheduler = new Scheduler();
-                BeanUtils.populate(scheduler, map);
-                scheduler.setSchedulerId((String) map.get(ID_FIELD));
+                Scheduler scheduler = wrapDBObjectToScheduler(cursor.next());
                 schedulers.add(scheduler);
             }
 
@@ -97,8 +134,17 @@ public class SchedulerPolicy implements Constants {
         return schedulers;
     }
 
+    private static Scheduler wrapDBObjectToScheduler(DBObject dbObj) throws IllegalAccessException, InvocationTargetException {
+        Map<?, ?> map = dbObj.toMap();
+        Scheduler scheduler = new Scheduler();
+        BeanUtils.populate(scheduler, map);
+        scheduler.setSchedulerId(map.get(ID_FIELD).toString());
+        return scheduler;
+    }
+
     /**
      * Store a scheduler definition into the dataStore
+     *
      * @param scheduler schedulerData
      * @return the new scheduler Id
      * @throws IOException
@@ -116,7 +162,7 @@ public class SchedulerPolicy implements Constants {
         String id = null;
 
         collection.insert(doc);
-        logger.info(String.format("Scheduler %s created.", scheduler.toString()));
+        logger.info(String.format("Creation of  %s.", scheduler.toString()));
 
         if (doc.containsField(ID_FIELD)) {
             id = String.valueOf(doc.get(ID_FIELD));
@@ -125,10 +171,11 @@ public class SchedulerPolicy implements Constants {
         scheduleIfNeeded(scheduler);
 
         return id;
-
     }
 
     /**
+     * Update the scheduler
+     *
      * @param schedulerId if of the scheduler to update
      * @param scheduler   scheduler data
      * @return success or not
@@ -145,7 +192,7 @@ public class SchedulerPolicy implements Constants {
         DBObject doc = (DBObject) JSON.parse(jsonString);
 
         WriteResult result = collection.save(doc);
-
+        logger.info(String.format("Update scheduler   %s.", scheduler));
         return result.getN() > 0;
     }
 

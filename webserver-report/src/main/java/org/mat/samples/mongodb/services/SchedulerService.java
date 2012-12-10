@@ -17,6 +17,8 @@ import org.mat.samples.mongodb.vo.Scheduler;
 import org.quartz.SchedulerException;
 
 /**
+ * REST entry point to administer the Schedulers
+ *
  * User: E010925
  * Date: 06/12/12
  * Time: 09:22
@@ -26,31 +28,41 @@ import org.quartz.SchedulerException;
 public class SchedulerService {
 
     @GET
-    public List<Scheduler> listSchedulers(){
-        List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
-        return schedulers;
+    public List<Scheduler> listSchedulers() {
+        return SchedulerPolicy.listSchedulers();
+    }
+
+    @GET
+         @Path("/{schedulerId}")
+         public Scheduler getSchedulerById(@PathParam("schedulerId") String schedulerId) {
+        return SchedulerPolicy.findSchedulerById(schedulerId);
+    }
+
+    @GET
+    @Path("/delete/{schedulerId}")
+    public boolean deleteSchedulerById(@PathParam("schedulerId") String schedulerId) {
+        return SchedulerPolicy.deleteSchedulerById(schedulerId);
     }
 
     @POST
     public String addScheduler(Scheduler scheduler) throws IOException, SchedulerException {
-    	String schedulerId = SchedulerPolicy.addScheduler(scheduler);
-    	return schedulerId;
+        return  SchedulerPolicy.addScheduler(scheduler);
     }
 
     /**
      * Will be used to update the scheduler,
      * either its definition, either its status (Constants.STATUS_RUNNING, Constants.STATUS_STOPPED)
-     * @param scheduler
-     * @param schedulerId
+     *
+     * @param scheduler  scheduler to update
+     * @param schedulerId  schedulerId
      * @return ok or not to be displayed on the user interface.
-     * @throws IOException 
-     * @throws JsonMappingException 
-     * @throws JsonGenerationException 
+     * @throws IOException
+     * @throws JsonMappingException
+     * @throws JsonGenerationException
      */
     @POST
     @Path("/{schedulerId}")
-    public boolean updateScheduler(Scheduler scheduler, @PathParam("schedulerId") String schedulerId) throws  IOException{
-    	boolean done = SchedulerPolicy.updateScheduler(schedulerId, scheduler);
-        return done;
+    public boolean updateScheduler(Scheduler scheduler, @PathParam("schedulerId") String schedulerId) throws IOException {
+        return SchedulerPolicy.updateScheduler(schedulerId, scheduler);
     }
 }

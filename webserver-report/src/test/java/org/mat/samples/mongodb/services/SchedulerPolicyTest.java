@@ -1,12 +1,6 @@
 package org.mat.samples.mongodb.services;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
+import com.mongodb.DBObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,82 +13,103 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+
 public class SchedulerPolicyTest implements Constants {
+    private static final String MONGO_SERVER = "dun-tst-devf01";
+    private static final int MONGO_PORT = 27017;
+    private static final String MONGO_DB = "mydbTest";
 
-	private static Logger logger = LoggerFactory
-			.getLogger(SchedulerPolicyTest.class);
+    private static DBObject oneObject;
 
-	private final MongoListener ml;
+    private static Logger logger = LoggerFactory
+            .getLogger(SchedulerPolicyTest.class);
 
-	public SchedulerPolicyTest() {
-		super();
-		ml = new MongoListener();
-	}
+    private final MongoListener ml;
 
-	@Before
-	public void setUp() {
-		ml.contextInitialized(null);
-	}
+    public SchedulerPolicyTest() {
+        super();
+        ml = new MongoListener(MONGO_SERVER, MONGO_PORT, MONGO_DB);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		MonitorPolicy.purgeDB(SCHEDULER_CONFIG_COLLECTION);
-		ml.contextDestroyed(null);
-	}
+    @Before
+    public void setUp() throws Exception{
 
-	@Test
-	public void testAddScheduler() throws  IOException, SchedulerException {
+        ml.contextInitialized(null);
+        addScheduler();
+        SchedulerPolicyTest.oneObject = SchedulerPolicy.giveCollection().findOne();
+    }
 
-		String id = addScheduler();
-		assertNotNull(id);
+    @After
+    public void tearDown() throws Exception {
+        MonitorPolicy.purgeDB(SCHEDULER_CONFIG_COLLECTION);
+        ml.contextDestroyed(null);
+    }
 
-	}
+    @Test
+    public void testAddScheduler() throws IOException, SchedulerException {
 
-	public String addScheduler() throws IOException, SchedulerException {
-		Scheduler scheduler = new Scheduler();
-		scheduler.setApplicationName("SteelUser");
-		scheduler.setServerName("appcfm51");
-		scheduler.setAsName("AS_STEELUSER");
+        String id = addScheduler();
+        assertNotNull("Once created into the dataStore, schedulerId should not be null", id);
 
-		scheduler
-				.setEndPointURL("http://appcfm51:9081/MonitoringServlet?diagnoseRes&log");
+    }
 
-		String id = SchedulerPolicy.addScheduler(scheduler);
-		logger.info(scheduler.toString());
-		return id;
-	}
+    public String addScheduler() throws IOException, SchedulerException {
+        Scheduler scheduler = new Scheduler();
+        scheduler.setApplicationName("SteelUser");
+        scheduler.setServerName("appcfm51");
+        scheduler.setAsName("AS_STEELUSER");
 
-	@Test
-	public void testUpdateScheduler() throws IOException, SchedulerException {
+        scheduler
+                .setEndPointURL("http://appcfm51:9081/MonitoringServlet?diagnoseRes&log");
 
-		addScheduler();
-		List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
-		if (null != schedulers && !schedulers.isEmpty()) {
-			Scheduler scheduler = schedulers.get(0);
-			scheduler.setState(STATUS_STOPPED);
-			if (SchedulerPolicy.updateScheduler(scheduler.getSchedulerId(), scheduler)) {
-				schedulers = SchedulerPolicy.listSchedulers();
-				if (null != schedulers) {
-					for (Scheduler schedul : schedulers) {
-						logger.info(schedul.toString());
-					}
-				}
-			}
+        String id = SchedulerPolicy.addScheduler(scheduler);
+        logger.info(scheduler.toString());
+        return id;
+    }
 
-		}
+    @Test
+    public void testUpdateScheduler() throws IOException, SchedulerException {
 
-	}
+        List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
+        if (null != schedulers && !schedulers.isEmpty()) {
+            Scheduler scheduler = schedulers.get(0);
+            scheduler.setState(STATUS_STOPPED);
+            if (SchedulerPolicy.updateScheduler(scheduler.getSchedulerId(), scheduler)) {
+                schedulers = SchedulerPolicy.listSchedulers();
+                if (null != schedulers) {
+                    for (Scheduler s : schedulers) {
+                        logger.info(s.toString());
+                    }
+                }
+            }
 
-	@Test
-	public void testListSchedulers() {
+        }
 
-		List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
-		if (null != schedulers) {
-			for (Scheduler scheduler : schedulers) {
-				logger.info(scheduler.toString());
-			}
-		}
+    }
 
-	}
+    @Test
+    public void testFindSchedulerById() {
+        String schedulerId = oneObject.get("_id").toString();
+        Scheduler scheduler = SchedulerPolicy.findSchedulerById(schedulerId);
+        logger.info(String.format("testFindSchedulerById: %s", scheduler));
+        assertNotNull("Scheduler should not be null", scheduler);
+    }
+
+
+    @Test
+    public void testListSchedulers() {
+
+        List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
+        if (null != schedulers) {
+            for (Scheduler scheduler : schedulers) {
+                logger.info(scheduler.toString());
+            }
+        }
+
+    }
 
 }

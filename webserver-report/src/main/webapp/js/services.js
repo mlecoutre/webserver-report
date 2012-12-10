@@ -144,29 +144,10 @@ angular.module('reportApp.services', [])
 
     // Create the application service
     function SchedulerService($http, $q) {
+
         this.listSchedulers = function () {
             console.log("listScheduler service");
             var deferred = $q.defer();
-            /*
-            var schedulers = [
-                                 {
-                                     schedulerId                    : "m1",
-                                     applicationName                : "SteelUser",
-                                     asName                         : "AS_STEELUSER",
-                                     endPointURL                    : "http://",
-                                     requestRepeatIntervalInMinutes : 20,
-                                     state                          : "running"
-                                 },
-                                 {
-                                        schedulerId                    : "m2",
-                                         applicationName                : "SteelUser",
-                                         asName                         : "AS_STEELUSER_BETA",
-                                         endPointURL                    : "http://",
-                                         requestRepeatIntervalInMinutes : 15,
-                                         state                          : "running"
-
-                                 }
-            ];*/
             $http({
                 method: 'GET',
                 url: '/report/services/schedulers'
@@ -177,60 +158,82 @@ angular.module('reportApp.services', [])
             })
                 .error(function (data, status, headers, config) {
                 console.log("error");
-                 return deferred.resolve(data);
+                return deferred.resolve(data);
             });
             return deferred.promise;
         }
 
         this.findSchedulerById = function (schedulerId) {
-        //  var deferred = $q.defer();
+            var deferred = $q.defer();
             $http({
                 method: 'GET',
                 url: '/report/services/schedulers/' + schedulerId
             })
                 .success(function (data, status, headers, config) {
-                console.log("retrieve scheduler"+data);
-                return data;
-               // return deferred.resolve(data);
+                console.log("SUCCESS SchedulerService - findSchedulerById()");
+                return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
-                return data;
-              //  return deferred.resolve(data);;
+                console.log("ERROR SchedulerService - findSchedulerById()");
+                return deferred.resolve(data);;
             });
-             //return deferred.promise;
+            return deferred.promise;
         }
 
         this.updateScheduler = function (scheduler) {
-            console.log("update scheduler");
-            return true;
+            var deferred = $q.defer();
+            $http({
+                method: 'POST',
+                url: '/report/services/schedulers/' + scheduler.schedulerId,
+                data: scheduler
+            })
+                .success(function (data, status, headers, config) {
+                console.log("SUCCESS SchedulerService - updateScheduler()");
+                return deferred.resolve(data);
+            })
+                .error(function (data, status, headers, config) {
+                console.log("ERROR SchedulerService - updateScheduler()");
+                return deferred.resolve(data);
+            });
+            return deferred.promise;
         }
 
         this.deleteScheduler = function (schedulerId) {
-            console.log("delete schedulerService: " + schedulerId);
-            return true;
+            var deferred = $q.defer();
+            $http({
+                method: 'GET',
+                url: '/report/services/schedulers/delete/' + schedulerId
+            })
+                .success(function (data, status, headers, config) {
+                console.log("SUCCESS SchedulerService - deleteScheduler()");
+                return deferred.resolve(data);
+            })
+                .error(function (data, status, headers, config) {
+                console.log("ERROR SchedulerService - deleteScheduler()");
+                return deferred.resolve(data);
+            });
+            return deferred.promise;
         }
+
 
         this.addScheduler = function (scheduler) {
-            console.log("addScheduler service");
             var deferred = $q.defer();
-                       $http({
-                           method: 'POST',
-                           url: '/report/services/schedulers/'+scheduler.schedulerId,
-                           data: scheduler
-                       })
-                           .success(function (data, status, headers, config) {
-                           console.log("add success");
-                           return deferred.resolve(data);
-                       })
-                           .error(function (data, status, headers, config) {
-                           console.log("error");
-                           return deferred.resolve(data);
-                       });
-                       return deferred.promise;
+            $http({
+                method: 'POST',
+                url: '/report/services/schedulers',
+                data: scheduler
+            })
+                .success(function (data, status, headers, config) {
+                console.log("SUCCESS SchedulerService - addScheduler()");
+                return deferred.resolve(data);
+            })
+                .error(function (data, status, headers, config) {
+                console.log("ERROR SchedulerService - addScheduler()");
+                return deferred.resolve(data);
+            });
+            return deferred.promise;
         }
     }
-
     // return instance of Scheduler service
     return new SchedulerService($http, $q);
 }]).

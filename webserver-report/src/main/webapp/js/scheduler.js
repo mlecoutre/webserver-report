@@ -14,12 +14,16 @@ function SchedulerCtrl($scope, $http, schedulerService) {
 
     $scope.addScheduler = function () {
         var scheduler = createSchedulerFromScopeVariable();
+        scheduler.schedulerId = null;
         var promise = schedulerService.addScheduler(scheduler);
 
-        promise.then(function(greeting) {
-            $('#msg').html('Success: ' + greeting);
-        }, function(reason) {
-            $('#msg').html('Failed: ' + reason);
+        promise.then(function (greeting) {
+            $scope.schedulers = schedulerService.listSchedulers();
+            $('#msg').html('Scheduler successfully created');
+            $('#msgBox').show();
+        }, function (reason) {
+            $('#msg').html('Failed to create a new scheduler : ' + reason);
+            $('#msgBox').show();
         });
     }
 
@@ -27,9 +31,17 @@ function SchedulerCtrl($scope, $http, schedulerService) {
         bootbox.confirm("Are you sure?", function (confirmed) {
             if (confirmed) {
                 console.log("Scheduler delete " + schedulerId);
-                result = schedulerService.deleteScheduler(schedulerId);
+                var promise = schedulerService.deleteScheduler(schedulerId);
+                promise.then(function () {
+                    $scope.schedulers = schedulerService.listSchedulers();
+                    $('#msg').html('Scheduler successfully deleted');
+                    $('#msgBox').show();
+                }, function (reason) {
+                    $('#msg').html('Failed to delete the scheduler : ' + reason);
+                    $('#msgBox').show();
+                });
             } else {
-                console.log("Scheduler deletion cancelled for "+schedulerId);
+                console.log("Scheduler deletion cancelled for " + schedulerId);
             }
         });
     }
@@ -38,20 +50,41 @@ function SchedulerCtrl($scope, $http, schedulerService) {
      * Initialize the update form
      */
     $scope.editScheduler = function (schedulerId) {
-        var scheduler = schedulerService.findSchedulerById(schedulerId);
-        $scope.schedulerId = scheduler.schedulerId;
-        $scope.applicationName = scheduler.applicationName;
-        $scope.asName = scheduler.asName;
-        $scope.serverName = scheduler.serverName;
-        $scope.requestRepeatIntervalInMinutes = scheduler.requestRepeatIntervalInMinutes;
-        $scope.state = scheduler.state;
-        $scope.endPointURL = scheduler.endPointURL;
-        $('#editScheduler').tab('show');
+        var promise = schedulerService.findSchedulerById(schedulerId);
+
+        promise.then(function (scheduler) {
+            $scope.schedulerId = scheduler.schedulerId;
+            $scope.applicationName = scheduler.applicationName;
+            $scope.asName = scheduler.asName;
+            $scope.serverName = scheduler.serverName;
+            $scope.requestRepeatIntervalInMinutes = scheduler.requestRepeatIntervalInMinutes;
+            $scope.state = scheduler.state;
+            $scope.endPointURL = scheduler.endPointURL;
+
+            $('#titleEdit').click();
+            $('#updateScheduler').show();
+            $('#addScheduler').hide();
+        });
+    }
+
+    $scope.cancel = function () {
+        $('#reset').click();
+        $('#titleList').click();
+        $('#updateScheduler').hide();
+        $('#addScheduler').show();
     }
 
     $scope.updateScheduler = function (schedulerId) {
         var scheduler = createSchedulerFromScopeVariable();
-        schedulerService.updateScheduler(scheduler);
+        var promise = schedulerService.updateScheduler(scheduler);
+        promise.then(function () {
+            $scope.schedulers = schedulerService.listSchedulers();
+            $('#msg').html('Scheduler successfully updated');
+            $('#msgBox').show();
+        }, function (reason) {
+            $('#msg').html('Failed to update the scheduler : ' + reason);
+            $('#msgBox').show();
+        });
     }
 
     $scope.startScheduler = function (schedulerId) {

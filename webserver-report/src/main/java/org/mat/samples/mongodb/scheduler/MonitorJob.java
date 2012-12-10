@@ -14,22 +14,26 @@ import org.slf4j.LoggerFactory;
  * Date: 05/12/12
  * Time: 14:50
  */
-public class MonitorJob implements Job{
+public class MonitorJob implements Job {
 
     private Logger logger = LoggerFactory.getLogger(MonitorJob.class);
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.info("Start Job");
-        
+
+
         Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
-				.getJobDataMap().get(Scheduler.class.getSimpleName());
-        
-        if (scheduler.isStopped())
-        	return;
-		
-		batchInsert(scheduler.getEndPointURL(), scheduler.getApplicationName(),
-				scheduler.getServerName(), scheduler.getAsName());
-        
+                .getJobDataMap().get(Scheduler.class.getSimpleName());
+
+        if (scheduler.isStopped()) {
+            logger.info(String.format("Job %s on server %s for application %s is in STOPPED status", scheduler.getAsName(),
+                    scheduler.getServerName(), scheduler.getApplicationName()));
+            return;
+        }
+        logger.info(String.format("START Job %s for AS %s for application %s", scheduler.getAsName(),
+                scheduler.getServerName(), scheduler.getApplicationName()));
+        batchInsert(scheduler.getEndPointURL(), scheduler.getApplicationName(),
+                scheduler.getServerName(), scheduler.getAsName());
+
     }
 }

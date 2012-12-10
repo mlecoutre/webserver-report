@@ -43,16 +43,14 @@ public class SchedulerPolicyTest implements Constants {
 	}
 
 	@Test
-	public void testAddScheduler() throws JsonGenerationException,
-			JsonMappingException, IOException, SchedulerException {
+	public void testAddScheduler() throws  IOException, SchedulerException {
 
 		String id = addScheduler();
 		assertNotNull(id);
 
 	}
 
-	public String addScheduler() throws JsonGenerationException,
-			JsonMappingException, IOException, SchedulerException {
+	public String addScheduler() throws IOException, SchedulerException {
 		Scheduler scheduler = new Scheduler();
 		scheduler.setApplicationName("SteelUser");
 		scheduler.setServerName("appcfm51");
@@ -67,7 +65,7 @@ public class SchedulerPolicyTest implements Constants {
 	}
 
 	@Test
-	public void testUpdateScheduler() throws JsonGenerationException, JsonMappingException, IOException, SchedulerException {
+	public void testUpdateScheduler() throws IOException, SchedulerException {
 
 		addScheduler();
 		List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();

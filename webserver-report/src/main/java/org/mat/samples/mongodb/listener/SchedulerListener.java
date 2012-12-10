@@ -10,6 +10,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.policy.SchedulerPolicy;
 import org.mat.samples.mongodb.scheduler.MonitorJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -41,6 +42,7 @@ public class SchedulerListener implements ServletContextListener, Constants {
         try {
             scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
+            SchedulerPolicy.initSchedulers();
         } catch (SchedulerException e) {
             logger.error("Error during Scheduler initialization", e);
         }

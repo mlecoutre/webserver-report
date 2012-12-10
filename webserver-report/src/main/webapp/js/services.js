@@ -213,7 +213,21 @@ angular.module('reportApp.services', [])
 
         this.addScheduler = function (scheduler) {
             console.log("addScheduler service");
-            return true;
+            var deferred = $q.defer();
+                       $http({
+                           method: 'POST',
+                           url: '/report/services/schedulers/'+scheduler.schedulerId,
+                           data: scheduler
+                       })
+                           .success(function (data, status, headers, config) {
+                           console.log("add success");
+                           return deferred.resolve(data);
+                       })
+                           .error(function (data, status, headers, config) {
+                           console.log("error");
+                           return deferred.resolve(data);
+                       });
+                       return deferred.promise;
         }
     }
 

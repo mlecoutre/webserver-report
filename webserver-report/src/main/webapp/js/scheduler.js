@@ -14,7 +14,13 @@ function SchedulerCtrl($scope, $http, schedulerService) {
 
     $scope.addScheduler = function () {
         var scheduler = createSchedulerFromScopeVariable();
-        var result = schedulerService.addScheduler(scheduler);
+        var promise = schedulerService.addScheduler(scheduler);
+
+        promise.then(function(greeting) {
+            $('#msg').html('Success: ' + greeting);
+        }, function(reason) {
+            $('#msg').html('Failed: ' + reason);
+        });
     }
 
     $scope.deleteScheduler = function (schedulerId) {

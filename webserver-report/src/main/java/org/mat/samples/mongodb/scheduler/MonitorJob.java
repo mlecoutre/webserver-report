@@ -25,7 +25,7 @@ public class MonitorJob implements Job {
         Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
                 .getJobDataMap().get(Scheduler.class.getSimpleName());
 
-        if (scheduler.isStopped()) {
+        if (scheduler.checkIfIsStopped()) {
             logger.info(String.format("Job %s on server %s for application %s is in STOPPED status", scheduler.getAsName(),
                     scheduler.getServerName(), scheduler.getApplicationName()));
             return;

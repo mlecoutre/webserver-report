@@ -1,13 +1,5 @@
 package org.mat.samples.mongodb.policy;
 
-import com.mongodb.*;
-import com.mongodb.util.JSON;
-import org.mat.samples.mongodb.Constants;
-import org.mat.samples.mongodb.listener.MongoListener;
-import org.mat.samples.mongodb.vo.ApplicationStats;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,6 +9,20 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
+
+import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.listener.MongoListener;
+import org.mat.samples.mongodb.vo.ApplicationStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
+import com.mongodb.util.JSON;
 
 /**
  * MonitorPolicy
@@ -189,6 +195,31 @@ public class MonitorPolicy implements Constants {
         //db.dropDatabase();
         coll.drop();
         logger.info("Nb elements after: " + coll.count());
+    }
+    
+    /**
+     * purge datas which are oldest than oldestDate
+     * @param applicationName
+     * @param serverName
+     * @param asName
+     * @param oldestDate
+     * @throws Exception
+     */
+    public static void purgeHistory(String applicationName, String serverName, String asName, String oldestDate) throws Exception {
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+        
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("server", serverName);
+        filter.put("asName", asName);
+        filter.append("timestamp", 
+        		new BasicDBObject("$lt", oldestDate)
+        );
+        
+        WriteResult result = coll.remove(filter);
+        
+        int count = result.getN();
+        logger.info("Nb elements removed: " + count);
     }
 
 

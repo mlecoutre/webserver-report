@@ -3,9 +3,13 @@ package org.mat.samples.mongodb.services;
 import org.mat.samples.mongodb.policy.MonitorPolicy;
 import org.mat.samples.mongodb.vo.ApplicationStats;
 import org.mat.samples.mongodb.vo.HttpFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +22,8 @@ import java.util.Set;
 @Path("/MonitorConfig")
 @Produces(MediaType.APPLICATION_JSON)
 public class MonitorConfigService {
+	
+	private final Logger logger = LoggerFactory.getLogger(MonitorConfigService.class);
 
     @GET
     @Path("/applications")
@@ -58,7 +64,12 @@ public class MonitorConfigService {
             String[] arr = f.getFileName().split("/");
             String asName = arr[arr.length - 2];
             String serverName = arr[2];
-            count = MonitorPolicy.batchInsert(f.getFileName(), applicationName, serverName, asName);
+            try {
+				long added = MonitorPolicy.batchInsert(f.getFileName(), applicationName, serverName, asName);
+				count = count + added;
+			} catch (IOException e) {
+				logger.warn("Exception occured while insert datas from " + f.getFileName(), e);
+			}
         }
         return String.format("%d elements stored in the dataStore for the application %s", count, applicationName);
     }

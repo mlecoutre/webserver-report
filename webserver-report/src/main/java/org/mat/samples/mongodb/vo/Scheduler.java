@@ -4,6 +4,7 @@ import org.mat.samples.mongodb.Constants;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: mlecoutre Date: 07/12/12 Time: 10:25
@@ -23,6 +24,9 @@ public class Scheduler implements Serializable {
     private int maxHistoryToKeepInDays = 31 * 6;
     private String initialState = Constants.STATUS_RUNNING;
     private String state = Constants.STATUS_RUNNING;
+    
+    private Date lastExecution = null;
+    private String lastStatus = null;
 
     private String endPointURL = null;
 
@@ -30,7 +34,9 @@ public class Scheduler implements Serializable {
         super();
     }
 
-    public Scheduler(String schedulerId, String applicationName, String serverName, String asName, String endPointURL, int requestRepeatIntervalInMinutes) {
+    public Scheduler(String schedulerId, 
+    		String applicationName, String serverName, String asName, 
+    		String endPointURL, int requestRepeatIntervalInMinutes) {
         this.schedulerId = schedulerId;
         this.applicationName = applicationName;
         this.serverName = serverName;
@@ -103,23 +109,41 @@ public class Scheduler implements Serializable {
     public void setEndPointURL(String endPointURL) {
         this.endPointURL = endPointURL;
     }
+    
+    public Date getLastExecution() {
+		return lastExecution;
+	}
+
+	public void setLastExecution(Date lastExecution) {
+		this.lastExecution = lastExecution;
+	}
+
+	public String getLastStatus() {
+		return lastStatus;
+	}
+
+	public void setLastStatus(String lastStatus) {
+		this.lastStatus = lastStatus;
+	}
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Scheduler [schedulerId=").append(schedulerId)
-                .append(", applicationName=").append(applicationName)
-                .append(", serverName=").append(serverName).append(", asName=")
-                .append(asName).append(", requestRepeatIntervalInMinutes=")
-                .append(requestRepeatIntervalInMinutes)
-                .append(", maxHistoryToKeepInDays=")
-                .append(maxHistoryToKeepInDays).append(", initialState=")
-                .append(initialState).append(", state=").append(state)
-                .append(", endPointURL=").append(endPointURL).append("]");
-        return builder.toString();
-    }
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Scheduler [schedulerId=").append(schedulerId)
+				.append(", applicationName=").append(applicationName)
+				.append(", serverName=").append(serverName).append(", asName=")
+				.append(asName).append(", requestRepeatIntervalInMinutes=")
+				.append(requestRepeatIntervalInMinutes)
+				.append(", maxHistoryToKeepInDays=")
+				.append(maxHistoryToKeepInDays).append(", initialState=")
+				.append(initialState).append(", state=").append(state)
+				.append(", endPointURL=").append(endPointURL)
+				.append(", lastExecution=").append(lastExecution)
+				.append(", lastStatus=").append(lastStatus).append("]");
+		return builder.toString();
+	}
 
-    // check if the scheduler is stopped
+	// check if the scheduler is stopped
     public boolean checkIfIsStopped() {
         return Constants.STATUS_STOPPED
                 .equals(this.getState());

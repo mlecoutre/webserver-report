@@ -2,6 +2,10 @@ package org.mat.samples.mongodb.scheduler;
 
 import static org.mat.samples.mongodb.policy.MonitorPolicy.batchInsert;
 
+import java.util.Date;
+
+import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.policy.SchedulerPolicy;
 import org.mat.samples.mongodb.vo.Scheduler;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -10,30 +14,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * User: E010925
- * Date: 05/12/12
- * Time: 14:50
+ * User: E010925 Date: 05/12/12 Time: 14:50
  */
-public class MonitorJob implements Job {
+public class MonitorJob implements Job, Constants {
 
-    private Logger logger = LoggerFactory.getLogger(MonitorJob.class);
+	private Logger logger = LoggerFactory.getLogger(MonitorJob.class);
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+	@Override
+	public void execute(JobExecutionContext jobExecutionContext)
+			throws JobExecutionException {
 
+		Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
+				.getJobDataMap().get(Scheduler.class.getSimpleName());
 
-        Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
-                .getJobDataMap().get(Scheduler.class.getSimpleName());
+		if (null != scheduler) {
+			
+			Date now = new Date();
+			
+			logger.info(String.format(
+					"START Job %s for AS %s for application %s",
+					scheduler.getAsName(), scheduler.getServerName(),
+					scheduler.getApplicationName()));
 
-        if (scheduler.isStopped()) {
-            logger.info(String.format("Job %s on server %s for application %s is in STOPPED status", scheduler.getAsName(),
-                    scheduler.getServerName(), scheduler.getApplicationName()));
-            return;
-        }
-        logger.info(String.format("START Job %s for AS %s for application %s", scheduler.getAsName(),
-                scheduler.getServerName(), scheduler.getApplicationName()));
-        batchInsert(scheduler.getEndPointURL(), scheduler.getApplicationName(),
-                scheduler.getServerName(), scheduler.getAsName());
+			String status = STATUS_OK;
+			try {
+				batchInsert(scheduler.getEndPointURL(),
+						scheduler.getApplicationName(), scheduler.getServerName(),
+						scheduler.getAsName());
+			} catch (Exception e) {
+				status = String.format("%s,  with exception: '%s'", STATUS_FAILED, e.getMessage());
+			}
+			
+			SchedulerPolicy.updateSchedulerStatus(scheduler.getSchedulerId(), now, status);
+		}
+	}
 
-    }
 }

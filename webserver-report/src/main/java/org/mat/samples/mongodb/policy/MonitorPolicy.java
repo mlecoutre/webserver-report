@@ -1,22 +1,30 @@
 package org.mat.samples.mongodb.policy;
 
-import com.mongodb.*;
-import com.mongodb.util.JSON;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Set;
+
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
 import org.mat.samples.mongodb.vo.ApplicationStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Set;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
+import com.mongodb.util.JSON;
 
 /**
  * MonitorPolicy
@@ -190,6 +198,31 @@ public class MonitorPolicy implements Constants {
         coll.drop();
         logger.info("Nb elements after: " + coll.count());
     }
+    
+    /**
+     * purge datas which are oldest than oldestDate
+     * @param applicationName
+     * @param serverName
+     * @param asName
+     * @param oldestDate
+     * @throws Exception
+     */
+    public static void purgeHistory(String applicationName, String serverName, String asName, String oldestDate) throws Exception {
+        DB db = MongoListener.getMongoDB();
+        DBCollection coll = db.getCollection(applicationName);
+        
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("server", serverName);
+        filter.put("asName", asName);
+        filter.append("timestamp", 
+        		new BasicDBObject("$lt", oldestDate)
+        );
+        
+        WriteResult result = coll.remove(filter);
+        
+        int count = result.getN();
+        logger.info("Nb elements removed: " + count);
+    }
 
 
     /**
@@ -325,14 +358,14 @@ public class MonitorPolicy implements Constants {
      * @param applicationName is used to gather all AS from a same application. One mongo collection per applicationName
      * @param serverName      server Name
      * @param asName          AS name
+     * @throws IOException 
      */
-    public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) {
-        URL u;
+    public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) throws IOException {
         BufferedReader bufferedReader = null;
         long nbElts = 0;
 
         try {
-            u = new URL(strUrl);
+            URL u = new URL(strUrl);
             URLConnection yc = u.openConnection();
             bufferedReader = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String line = null;
@@ -343,13 +376,10 @@ public class MonitorPolicy implements Constants {
                 DBObject doc = (DBObject) JSON.parse(line);
                 doc.put("server", serverName);
                 doc.put("asName", asName);
-                coll.insert(doc);
+                WriteResult result = coll.insert(doc);
+                nbElts = nbElts + result.getN();
             }
-            nbElts = coll.count();
 
-        } catch (IOException ioe) {
-            logger.info("Ouch - a FileNotFoundException happened.");
-            ioe.printStackTrace();
         } finally {
             if (bufferedReader != null) {
                 try {

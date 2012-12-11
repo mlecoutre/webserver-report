@@ -25,5 +25,8 @@ public interface Constants {
 
     public static final String STATUS_RUNNING = "running";
     public static final String STATUS_STOPPED = "stopped";
+    
+    public static final String STATUS_OK = "OK";
+    public static final String STATUS_FAILED = "Failed";
 
 }

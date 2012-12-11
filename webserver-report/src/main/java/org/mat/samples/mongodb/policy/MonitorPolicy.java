@@ -1,9 +1,11 @@
 package org.mat.samples.mongodb.policy;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -356,14 +358,14 @@ public class MonitorPolicy implements Constants {
      * @param applicationName is used to gather all AS from a same application. One mongo collection per applicationName
      * @param serverName      server Name
      * @param asName          AS name
+     * @throws IOException 
      */
-    public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) {
-        URL u;
+    public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) throws IOException {
         BufferedReader bufferedReader = null;
         long nbElts = 0;
 
         try {
-            u = new URL(strUrl);
+            URL u = new URL(strUrl);
             URLConnection yc = u.openConnection();
             bufferedReader = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String line = null;
@@ -374,13 +376,10 @@ public class MonitorPolicy implements Constants {
                 DBObject doc = (DBObject) JSON.parse(line);
                 doc.put("server", serverName);
                 doc.put("asName", asName);
-                coll.insert(doc);
+                WriteResult result = coll.insert(doc);
+                nbElts = nbElts + result.getN();
             }
-            nbElts = coll.count();
 
-        } catch (IOException ioe) {
-            logger.info("Ouch - a FileNotFoundException happened.");
-            ioe.printStackTrace();
         } finally {
             if (bufferedReader != null) {
                 try {

@@ -9,9 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
@@ -188,7 +194,18 @@ public class SchedulerPolicy implements Constants {
 			throws IllegalAccessException, InvocationTargetException {
 		Map<?, ?> map = dbObj.toMap();
 		Scheduler scheduler = new Scheduler();
-		BeanUtils.populate(scheduler, map);
+		
+		Set<?> keys = map.keySet();
+		for (Object key : keys) {
+			Object value = map.get(key);
+			try {
+				PropertyUtils.setProperty(scheduler, key.toString(), value);
+			} catch (Exception e) {
+				logger.warn("Unable to set property '" + key.toString()+"' in Scheduler.", e);
+			}
+		}
+		
+				
 		scheduler.setSchedulerId(map.get(ID_FIELD).toString());
 		return scheduler;
 	}
@@ -214,8 +231,9 @@ public class SchedulerPolicy implements Constants {
 
 		WriteResult result = collection.insert(doc);
 		int success = result.getN();
+		System.out.println(result.getError());
 
-		if (success > 0) {
+		//if (success > 0) {
 			logger.info(String.format("Creation of  %s.", scheduler.toString()));
 
 			if (doc.containsField(ID_FIELD)) {
@@ -228,7 +246,7 @@ public class SchedulerPolicy implements Constants {
 				logger.info("Schedule " + scheduler.toString());
 				schedule(scheduler);
 			}
-		}
+		//}
 
 		return id;
 	}
@@ -326,18 +344,24 @@ public class SchedulerPolicy implements Constants {
 	 * @param lastExecution
 	 * @param lastStatus
 	 * @return
+	 * @throws IOException
 	 */
 	public static boolean updateSchedulerStatus(String schedulerId,
-			Date lastExecution, String lastStatus) {
+			Date lastExecution, String lastStatus) throws IOException {
 		
 		DBCollection collection = giveCollection();
 
-		DBObject doc = new BasicDBObject();
-
-		doc.put("_id", new ObjectId(schedulerId));
-		doc.put("lastExecution", lastExecution);
-		doc.put("lastStatus", lastStatus);
-		WriteResult result = collection.save(doc);
+		// reference for update : 
+		//	http://www.mkyong.com/mongodb/java-mongodb-update-document/
+		
+		DBObject query = new BasicDBObject().append("_id", new ObjectId(schedulerId));
+		
+		DBObject doc = new BasicDBObject().append("$set", new BasicDBObject()
+			.append("lastExecution", lastExecution)
+			.append("lastStatus", lastStatus)
+		);
+		
+		WriteResult result = collection.update(query, doc);
 		
 		logger.info(String.format("Update lastExecution and lastStatus for scheduler %s.", schedulerId));
 		boolean res = (result.getN() > 0);

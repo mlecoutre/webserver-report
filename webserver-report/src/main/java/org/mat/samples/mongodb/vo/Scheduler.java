@@ -120,7 +120,7 @@ public class Scheduler implements Serializable {
     }
 
     // check if the scheduler is stopped
-    public boolean isStopped() {
+    public boolean checkIfIsStopped() {
         return Constants.STATUS_STOPPED
                 .equals(this.getState());
     }

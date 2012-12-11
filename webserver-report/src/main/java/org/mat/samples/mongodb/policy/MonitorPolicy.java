@@ -198,9 +198,10 @@ public class MonitorPolicy implements Constants {
         coll.drop();
         logger.info("Nb elements after: " + coll.count());
     }
-    
+
     /**
      * purge datas which are oldest than oldestDate
+     *
      * @param applicationName
      * @param serverName
      * @param asName
@@ -210,16 +211,16 @@ public class MonitorPolicy implements Constants {
     public static void purgeHistory(String applicationName, String serverName, String asName, String oldestDate) throws Exception {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
-        
+
         BasicDBObject filter = new BasicDBObject();
         filter.put("server", serverName);
         filter.put("asName", asName);
-        filter.append("timestamp", 
-        		new BasicDBObject("$lt", oldestDate)
+        filter.append("timestamp",
+                new BasicDBObject("$lt", oldestDate)
         );
-        
+
         WriteResult result = coll.remove(filter);
-        
+
         int count = result.getN();
         logger.info("Nb elements removed: " + count);
     }
@@ -358,12 +359,11 @@ public class MonitorPolicy implements Constants {
      * @param applicationName is used to gather all AS from a same application. One mongo collection per applicationName
      * @param serverName      server Name
      * @param asName          AS name
-     * @throws IOException 
+     * @throws IOException
      */
     public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) throws IOException {
-        BufferedReader bufferedReader = null;
         long nbElts = 0;
-
+        BufferedReader bufferedReader = null;
         try {
             URL u = new URL(strUrl);
             URLConnection yc = u.openConnection();
@@ -371,15 +371,15 @@ public class MonitorPolicy implements Constants {
             String line = null;
             DB db = MongoListener.getMongoDB();
             DBCollection coll = db.getCollection(applicationName);
+            long before = coll.count();
             while ((line = bufferedReader.readLine()) != null) {
 
                 DBObject doc = (DBObject) JSON.parse(line);
                 doc.put("server", serverName);
                 doc.put("asName", asName);
-                WriteResult result = coll.insert(doc);
-                nbElts = nbElts + result.getN();
+                coll.insert(doc);
             }
-
+            nbElts = coll.count() - before;
         } finally {
             if (bufferedReader != null) {
                 try {

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @WebListener
 public class SchedulerListener implements ServletContextListener, Constants {
 
-    private Logger logger = LoggerFactory.getLogger(SchedulerListener.class);
+    private static Logger logger = LoggerFactory.getLogger(SchedulerListener.class);
 
     // Grab the Scheduler instance from the Factory
     private static Scheduler scheduler;
@@ -176,6 +176,7 @@ public class SchedulerListener implements ServletContextListener, Constants {
     	boolean success = true;
     	if (scheduler.checkExists(jobKey)) {
     		success = scheduler.deleteJob(jobKey);
+            logger.info(String.format("unSchedule %s", jobName));
     	}
     	
 		return success;

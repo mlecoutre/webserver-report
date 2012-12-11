@@ -233,6 +233,30 @@ angular.module('reportApp.services', [])
             });
             return deferred.promise;
         }
+
+        this.changeStatus = function(scheduler) {
+             var action ='';
+             if (scheduler.state == 'running'){
+                    action = 'stop';
+             }else{
+                    action = 'start';
+             }
+             var deferred = $q.defer();
+             $http({
+                  method: 'GET',
+                  url: '/report/services/schedulers/'+action+'/'+scheduler.schedulerId,
+                  data: scheduler
+             })
+                  .success(function (data, status, headers, config) {
+                  console.log("SUCCESS SchedulerService - changeStatus("+action+")");
+                  return deferred.resolve(data);
+             })
+                   .error(function (data, status, headers, config) {
+                   console.log("ERROR SchedulerService - changeStatus("+action+")");
+                   return deferred.resolve(data);
+             });
+             return deferred.promise;
+        }
     }
     // return instance of Scheduler service
     return new SchedulerService($http, $q);

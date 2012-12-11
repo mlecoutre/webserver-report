@@ -59,9 +59,9 @@ public class SchedulerPolicyTest implements Constants {
 
     public String addScheduler() throws IOException, SchedulerException {
         Scheduler scheduler = new Scheduler();
-        scheduler.setApplicationName("SteelUser");
-        scheduler.setServerName("appcfm51");
-        scheduler.setAsName("AS_STEELUSER");
+        scheduler.setApplicationName("SteelUser2");
+        scheduler.setServerName("appcfm512");
+        scheduler.setAsName("AS_STEELUSER2");
 
         scheduler
                 .setEndPointURL("http://appcfm51:9081/MonitoringServlet?diagnoseRes&log");

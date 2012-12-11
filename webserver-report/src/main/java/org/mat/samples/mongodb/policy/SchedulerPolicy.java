@@ -72,7 +72,7 @@ public class SchedulerPolicy implements Constants {
             }
         }
 
-        if (!exist) {
+        if (exist) {
             BasicDBObject dbIndex = new BasicDBObject();
 
             // indexex field is ascending (1) or descending (-1)
@@ -186,8 +186,26 @@ public class SchedulerPolicy implements Constants {
             throws IllegalAccessException, InvocationTargetException {
         Map<?, ?> map = dbObj.toMap();
         Scheduler scheduler = new Scheduler();
-        BeanUtils.populate(scheduler, map);
-        scheduler.setSchedulerId(map.get(ID_FIELD).toString());
+        scheduler.setSchedulerId(map.get("_id").toString());
+        scheduler.setApplicationName((String) map.get("applicationName"));
+        scheduler.setServerName((String) map.get("serverName"));
+        scheduler.setAsName((String) map.get("asName"));
+        scheduler.setEndPointURL((String) map.get("endPointURL"));
+        scheduler.setState((String) map.get("state"));
+        scheduler.setLastStatus((String) map.get("lastStatus"));
+        scheduler.setInitialState((String) map.get("initialState"));
+        Object requestRepeatIntervalInMinutes = map.get("requestRepeatIntervalInMinutes");
+        if (requestRepeatIntervalInMinutes != null)
+            scheduler.setRequestRepeatIntervalInMinutes(new Integer(requestRepeatIntervalInMinutes.toString()));
+        Object maxHistoryToKeepInDays = map.get("maxHistoryToKeepInDays");
+        if (maxHistoryToKeepInDays != null)
+            scheduler.setMaxHistoryToKeepInDays(new Integer(maxHistoryToKeepInDays.toString()));
+        Object obj = map.get("lastExecution");
+
+//        scheduler.setLastExecution(d);
+
+        //BeanUtils.populate(scheduler, map);
+        //scheduler.setSchedulerId(map.get(ID_FIELD).toString());
         return scheduler;
     }
 
@@ -203,6 +221,7 @@ public class SchedulerPolicy implements Constants {
             SchedulerException {
 
         DBCollection collection = giveCollection();
+        scheduler.setLastExecution(new Date());
 
         String jsonString = mapper.writeValueAsString(scheduler);
         DBObject doc = (DBObject) JSON.parse(jsonString);
@@ -210,21 +229,18 @@ public class SchedulerPolicy implements Constants {
         String id = null;
 
         WriteResult result = collection.insert(doc);
-        int success = result.getN();
 
-        if (success > 0) {
-            logger.info(String.format("Creation of  %s.", scheduler.toString()));
+        logger.info(String.format("Creation of  %s.", scheduler.toString()));
 
-            if (doc.containsField(ID_FIELD)) {
-                id = String.valueOf(doc.get(ID_FIELD));
-                scheduler.setSchedulerId(id);
-            }
+        if (doc.containsField(ID_FIELD)) {
+            id = String.valueOf(doc.get(ID_FIELD));
+            scheduler.setSchedulerId(id);
+        }
 
-            if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
-                    || Constants.STATUS_RUNNING.equals(scheduler.getState())) {
-                logger.info("Schedule " + scheduler.toString());
-                schedule(scheduler);
-            }
+        if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
+                || Constants.STATUS_RUNNING.equals(scheduler.getState())) {
+            logger.info("Schedule " + scheduler.toString());
+            schedule(scheduler);
         }
 
         return id;
@@ -234,7 +250,7 @@ public class SchedulerPolicy implements Constants {
      * Stop the scheduler schedulerId
      *
      * @param schedulerId id of the scheduler to stop
-     * @return  boolean value
+     * @return boolean value
      * @throws IOException
      * @throws SchedulerException
      */
@@ -256,8 +272,8 @@ public class SchedulerPolicy implements Constants {
     /**
      * start the scheduler schedulerId
      *
-     * @param schedulerId  id of the scheduler to start
-     * @return  boolean value
+     * @param schedulerId id of the scheduler to start
+     * @return boolean value
      * @throws IOException
      * @throws SchedulerException
      */
@@ -299,26 +315,23 @@ public class SchedulerPolicy implements Constants {
 
         doc.put("_id", new ObjectId(schedulerId));
 
-        WriteResult result = collection.save(doc);
+        collection.save(doc);
         logger.info(String.format("Update scheduler   %s.", scheduler));
-        boolean res = (result.getN() > 0);
 
-        if (res) {
-            unSchedule(oldScheduler);
-            if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
-                    || Constants.STATUS_RUNNING.equals(scheduler.getState())) {
-                logger.info("Schedule " + scheduler.toString());
-                schedule(scheduler);
-            }
+        unSchedule(oldScheduler);
+        if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
+                || Constants.STATUS_RUNNING.equals(scheduler.getState())) {
+            logger.info("Schedule " + scheduler.toString());
+            schedule(scheduler);
         }
 
-        return res;
+
+        return true;
     }
 
     /**
      * Update lastExecution and lastStatus for scheduler schedulerId
      *
-     * @param schedulerId   schedulerId
      * @param lastExecution timestamp of the last execution
      * @param lastStatus    last status message
      * @return boolean value
@@ -327,17 +340,16 @@ public class SchedulerPolicy implements Constants {
                                                 Date lastExecution, String lastStatus) {
 
         DBCollection collection = giveCollection();
-
+        DBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(schedulerId));
         DBObject doc = new BasicDBObject();
-
-        doc.put("_id", new ObjectId(schedulerId));
         doc.put("lastExecution", lastExecution);
         doc.put("lastStatus", lastStatus);
-        WriteResult result = collection.save(doc);
+
+        collection.update(query, doc);
 
         logger.info(String.format("Update lastExecution and lastStatus for scheduler %s.", schedulerId));
-        boolean res = (result.getN() > 0);
-        return res;
+        return true;
 
     }
 

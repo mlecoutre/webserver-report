@@ -86,14 +86,12 @@ function SchedulerCtrl($scope, $http, schedulerService) {
     $scope.changeStatus = function(scheduler){
        var promise = schedulerService.changeStatus(scheduler);
        promise.then(function(){
-
             //refresh list
             $scope.schedulers = schedulerService.listSchedulers();
-            displaySuccessMessage('Failed to change status of the scheduler : ' + reason);
+            displaySuccessMessage('Succeed to change status of the scheduler.' );
        }, function(reason){
             displayErrorMessage('Failed to change status of the scheduler : ' + reason);
        });
-
     } ;
 
      function displayErrorMessage( msg ){

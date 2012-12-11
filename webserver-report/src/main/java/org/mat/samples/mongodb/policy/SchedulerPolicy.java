@@ -6,6 +6,7 @@ import static org.mat.samples.mongodb.listener.SchedulerListener.unSchedule;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,45 +55,45 @@ public class SchedulerPolicy implements Constants {
 	 * check if index exist for collection scheduler-config
 	 */
 	public static void checkIndex() {
-		
+
 		DBCollection coll = giveCollection();
-		
+
 		boolean exist = false;
-		
+
 		List<DBObject> indexes = coll.getIndexInfo();
 		if ((null != indexes) && (!indexes.isEmpty())) {
 			for (DBObject dbIndex : indexes) {
-				if (dbIndex.containsField("applicationName") 
-				 && dbIndex.containsField("serverName")
-				 && dbIndex.containsField("asName")) {
+				if (dbIndex.containsField("applicationName")
+						&& dbIndex.containsField("serverName")
+						&& dbIndex.containsField("asName")) {
 					exist = true;
 					break;
 				}
 			}
 		}
-		
+
 		if (!exist) {
 			BasicDBObject dbIndex = new BasicDBObject();
-			
+
 			// indexex field is ascending (1) or descending (-1)
 			dbIndex.append("applicationName", 1);
 			dbIndex.append("serverName", 1);
 			dbIndex.append("asName", 1);
-			
+
 			// unique index
 			dbIndex.append("unique", true);
 			// remove duplicated keys
 			dbIndex.append("dropDups", true);
-						
-			//coll.createIndex(dbIndex);  //
+
+			// coll.createIndex(dbIndex); //
 			coll.ensureIndex(dbIndex);
 		}
-		
+
 	}
-	
+
 	// launch Schedulers as jobs
 	public static void initSchedulers() throws SchedulerException {
-		
+
 		// launch the schedulers
 		List<Scheduler> schedulers = listSchedulers();
 		for (Scheduler scheduler : schedulers) {
@@ -133,12 +134,13 @@ public class SchedulerPolicy implements Constants {
 	 * @param schedulerId
 	 *            scheduler identifier to delete
 	 * @return boolean
-	 * @throws SchedulerException 
+	 * @throws SchedulerException
 	 */
-	public static boolean deleteSchedulerById(String schedulerId) throws SchedulerException {
+	public static boolean deleteSchedulerById(String schedulerId)
+			throws SchedulerException {
 
 		Scheduler oldScheduler = findSchedulerById(schedulerId);
-		
+
 		logger.info(String.format("deleteSchedulerById %s", schedulerId));
 		DBCollection collection = giveCollection();
 		DBObject filter = new BasicDBObject();
@@ -146,7 +148,7 @@ public class SchedulerPolicy implements Constants {
 		filter.put("_id", new ObjectId(schedulerId));
 		DBObject obj = collection.findOne(filter);
 		WriteResult result = collection.remove(obj);
-		
+
 		boolean success = (result.getN() > 0);
 		if (success) {
 			unSchedule(oldScheduler);
@@ -212,23 +214,69 @@ public class SchedulerPolicy implements Constants {
 
 		WriteResult result = collection.insert(doc);
 		int success = result.getN();
-		
+
 		if (success > 0) {
 			logger.info(String.format("Creation of  %s.", scheduler.toString()));
-	
+
 			if (doc.containsField(ID_FIELD)) {
 				id = String.valueOf(doc.get(ID_FIELD));
 				scheduler.setSchedulerId(id);
 			}
-	
+
 			if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
 					|| Constants.STATUS_RUNNING.equals(scheduler.getState())) {
 				logger.info("Schedule " + scheduler.toString());
 				schedule(scheduler);
 			}
 		}
-		
+
 		return id;
+	}
+
+	/**
+	 * stop the scheduler schedulerId
+	 * 
+	 * @param schedulerId
+	 * @return
+	 * @throws IOException
+	 * @throws SchedulerException
+	 */
+	public static boolean stopScheduler(String schedulerId) throws IOException,
+			SchedulerException {
+
+		boolean res = true;
+
+		Scheduler scheduler = findSchedulerById(schedulerId);
+		if (null != scheduler) {
+			scheduler.setSchedulerId(schedulerId);
+			scheduler.setState(STATUS_STOPPED);
+			res = updateScheduler(schedulerId, scheduler);
+		}
+
+		return res;
+	}
+
+	/**
+	 * start the scheduler schedulerId
+	 * 
+	 * @param schedulerId
+	 * @return
+	 * @throws IOException
+	 * @throws SchedulerException
+	 */
+	public static boolean startScheduler(String schedulerId)
+			throws IOException, SchedulerException {
+
+		boolean res = true;
+
+		Scheduler scheduler = findSchedulerById(schedulerId);
+		if (null != scheduler) {
+			scheduler.setSchedulerId(schedulerId);
+			scheduler.setState(STATUS_RUNNING);
+			res = updateScheduler(schedulerId, scheduler);
+		}
+
+		return res;
 	}
 
 	/**
@@ -240,7 +288,7 @@ public class SchedulerPolicy implements Constants {
 	 *            scheduler data
 	 * @return success or not
 	 * @throws IOException
-	 * @throws SchedulerException 
+	 * @throws SchedulerException
 	 */
 	public static boolean updateScheduler(String schedulerId,
 			Scheduler scheduler) throws IOException, SchedulerException {
@@ -272,6 +320,29 @@ public class SchedulerPolicy implements Constants {
 		return res;
 	}
 
-	
+	/**
+	 * update lasttExecution and lastStatus for scheduler schedulerId
+	 * @param schedulerId
+	 * @param lastExecution
+	 * @param lastStatus
+	 * @return
+	 */
+	public static boolean updateSchedulerStatus(String schedulerId,
+			Date lastExecution, String lastStatus) {
+		
+		DBCollection collection = giveCollection();
+
+		DBObject doc = new BasicDBObject();
+
+		doc.put("_id", new ObjectId(schedulerId));
+		doc.put("lastExecution", lastExecution);
+		doc.put("lastStatus", lastStatus);
+		WriteResult result = collection.save(doc);
+		
+		logger.info(String.format("Update lastExecution and lastStatus for scheduler %s.", schedulerId));
+		boolean res = (result.getN() > 0);
+		return res;
+		
+	}
 
 }

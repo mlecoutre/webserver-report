@@ -43,6 +43,20 @@ public class SchedulerService {
 			@PathParam("schedulerId") String schedulerId) throws SchedulerException {
 		return SchedulerPolicy.deleteSchedulerById(schedulerId);
 	}
+	
+	@GET
+	@Path("/stop/{schedulerId}")
+	public boolean stopSchedulerById(
+			@PathParam("schedulerId") String schedulerId) throws SchedulerException, IOException {
+		return SchedulerPolicy.stopScheduler(schedulerId);
+	}
+	
+	@GET
+	@Path("/start/{schedulerId}")
+	public boolean startSchedulerById(
+			@PathParam("schedulerId") String schedulerId) throws SchedulerException, IOException {
+		return SchedulerPolicy.startScheduler(schedulerId);
+	}
 
 	@POST
 	public String addScheduler(Scheduler scheduler) throws IOException,

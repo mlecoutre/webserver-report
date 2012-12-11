@@ -184,12 +184,13 @@ public class SchedulerPolicy implements Constants {
     public static boolean updateScheduler(String schedulerId,
                                           Scheduler scheduler) throws IOException {
 
-        scheduler.setSchedulerId(schedulerId);
+        //scheduler.setSchedulerId(schedulerId);
 
         DBCollection collection = giveCollection();
 
         String jsonString = mapper.writeValueAsString(scheduler);
         DBObject doc = (DBObject) JSON.parse(jsonString);
+        doc.put("_id",   new ObjectId(schedulerId));
 
         WriteResult result = collection.save(doc);
         logger.info(String.format("Update scheduler   %s.", scheduler));

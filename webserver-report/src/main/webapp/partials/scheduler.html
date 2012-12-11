@@ -1,17 +1,13 @@
 <h2>Scheduling</h2>
 
-<div class="tabbable tabs-left" style="width:90%" ng-controller="SchedulerCtrl">
+<div class="tabbable" style="width:90%" ng-controller="SchedulerCtrl">
     <ul class="nav nav-tabs  report" id="reportTab">
         <li class="active"><a id="titleList" ng-show-tab="" href="#listSchedulers">Schedulers</a></li>
         <li><a ng-show-tab="" id="titleEdit" href="#editScheduler">Edition</a></li>
     </ul>
 
     <div class="tab-content">
-
-
         <div class="tab-pane active" id="listSchedulers">
-
-            <legend>List of applications</legend>
             <table class="table table-striped last5-template" id="lastAppointments">
                 <thead>
                 <tr>
@@ -20,6 +16,8 @@
                     <th>AS</th>
                     <th>interval</th>
                     <th>Status</th>
+                    <th>Last Execution</th>
+                    <th>Last Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -29,7 +27,9 @@
                     <td>{{scheduler.serverName}}</td>
                     <td>{{scheduler.asName}}</td>
                     <td>{{scheduler.requestRepeatIntervalInMinutes}}</td>
-                    <td>{{scheduler.state}}</td>
+                    <td><a ng-click="changeStatus(scheduler)">{{scheduler.state}}</a></td>
+                    <td>{{scheduler.lastExecution}}</td>
+                    <td>{{scheduler.lastStatus}}</td>
                     <td><a class="edit" ng-table-action="editScheduler(scheduler.schedulerId)"><i class="icon-edit"></i></a>
                         <a class="del" ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i
                                 class="icon-trash"></i></a></td>

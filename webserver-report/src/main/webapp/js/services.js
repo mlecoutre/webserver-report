@@ -15,10 +15,12 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/applications',
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - retrieveApps()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - retrieveApps()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -31,10 +33,12 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/servers/' + applicationName,
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - retrievePhysicalServers()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - retrievePhysicalServers()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -47,10 +51,12 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/ass/' + applicationName,
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - retrieveASS()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - retrieveASS()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -63,10 +69,12 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/qcfs/' + applicationName + '/' + server + '/' + as
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - retrieveQCFs()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - retrieveQCFs()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -79,30 +87,31 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/dataSources/' + applicationName + '/' + server + '/' + as
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - retrieveDataSources()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - retrieveDataSources()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
 
         this.getStats = function (applicationName) {
-            console.log("applicationsService.getStats");
-            //var deferred = $q.defer();
+            var deferred = $q.defer();
             $http({
                 method: 'GET',
                 url: '/report/services/MonitorConfig/stats/' + applicationName
             })
                 .success(function (data, status, headers, config) {
-                console.log("success");
-                return data; //deferred.resolve(data);
+                console.log("SUCCESS ApplicationService - getStats()");
+                return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
-                return data;
+                console.log("ERROR ApplicationService - getStats()");
+                return deferred.reject(data);
             });
-            // return deferred.promise;
+            return deferred.promise;
         }
 
         this.batchInsert = function (applicationName, files) {
@@ -114,12 +123,13 @@ angular.module('reportApp.services', [])
                 data: files
             })
                 .success(function (data, status, headers, config) {
-                console.log("success");
+                console.log("SUCCESS ApplicationService - batchInsert()");
                 return deferred.resolve(data);
 
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
+                console.log("ERROR ApplicationService - batchInsert()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -131,9 +141,11 @@ angular.module('reportApp.services', [])
                 url: '/report/services/MonitorConfig/purge/' + $scope.applicationName
             })
                 .success(function (data, status, headers, config) {
+                console.log("SUCCESS ApplicationService - purge()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
+                console.log("ERROR ApplicationService - purge()");
                 return deferred.resolve(data);
             });
         }
@@ -153,12 +165,12 @@ angular.module('reportApp.services', [])
                 url: '/report/services/schedulers'
             })
                 .success(function (data, status, headers, config) {
-                console.log("success");
+                console.log("SUCCESS SchedulerService - listSchedulers()");
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("error");
-                return deferred.resolve(data);
+                console.log("ERROR SchedulerService - listSchedulers()");
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -175,7 +187,7 @@ angular.module('reportApp.services', [])
             })
                 .error(function (data, status, headers, config) {
                 console.log("ERROR SchedulerService - findSchedulerById()");
-                return deferred.resolve(data);;
+                return deferred.reject(data);;
             });
             return deferred.promise;
         }
@@ -193,7 +205,7 @@ angular.module('reportApp.services', [])
             })
                 .error(function (data, status, headers, config) {
                 console.log("ERROR SchedulerService - updateScheduler()");
-                return deferred.resolve(data);
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -210,7 +222,7 @@ angular.module('reportApp.services', [])
             })
                 .error(function (data, status, headers, config) {
                 console.log("ERROR SchedulerService - deleteScheduler()");
-                return deferred.resolve(data);
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
@@ -229,33 +241,33 @@ angular.module('reportApp.services', [])
             })
                 .error(function (data, status, headers, config) {
                 console.log("ERROR SchedulerService - addScheduler()");
-                return deferred.resolve(data);
+                return deferred.reject(data);
             });
             return deferred.promise;
         }
 
-        this.changeStatus = function(scheduler) {
-             var action ='';
-             if (scheduler.state == 'running'){
-                    action = 'stop';
-             }else{
-                    action = 'start';
-             }
-             var deferred = $q.defer();
-             $http({
-                  method: 'GET',
-                  url: '/report/services/schedulers/'+action+'/'+scheduler.schedulerId,
-                  data: scheduler
-             })
-                  .success(function (data, status, headers, config) {
-                  console.log("SUCCESS SchedulerService - changeStatus("+action+")");
-                  return deferred.resolve(data);
-             })
-                   .error(function (data, status, headers, config) {
-                   console.log("ERROR SchedulerService - changeStatus("+action+")");
-                   return deferred.resolve(data);
-             });
-             return deferred.promise;
+        this.changeStatus = function (scheduler) {
+            var action = '';
+            if (scheduler.state == 'running') {
+                action = 'stop';
+            } else {
+                action = 'start';
+            }
+            var deferred = $q.defer();
+            $http({
+                method: 'GET',
+                url: '/report/services/schedulers/' + action + '/' + scheduler.schedulerId,
+                data: scheduler
+            })
+                .success(function (data, status, headers, config) {
+                console.log("SUCCESS SchedulerService - changeStatus(" + action + ")");
+                return deferred.resolve(data);
+            })
+                .error(function (data, status, headers, config) {
+                console.log("ERROR SchedulerService - changeStatus(" + action + ")");
+                return deferred.reject(data);
+            });
+            return deferred.promise;
         }
     }
     // return instance of Scheduler service

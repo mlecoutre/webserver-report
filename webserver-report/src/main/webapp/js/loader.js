@@ -18,13 +18,26 @@ function LoaderCtrl($scope, $http, applicationsService) {
     //button load, that trigger the batch insert
     $scope.load = function () {
         console.log("load");
-        data = applicationsService.batchInsert($scope.applicationName, $scope.files);
-         $('#info').html(data);
-         $('#info').show();
+        var promise = applicationsService.batchInsert($scope.applicationName, $scope.files);
+        promise.then(function(data){
+            displaySuccessMessage("Files loaded successfully: "+data);
+        }, function(reason){
+             displayErrorMessage("Error loading files: "+ reason);
+        });
     }
 
+   $scope.reset = function(){
+         $scope.files = [];
+         $scope.applicationName = "";
+   }
+
     $scope.stats = function () {
-        $scope.stats = applicationsService.getStats($scope.applicationName);
+         var promise = applicationsService.getStats($scope.applicationName);
+         promise.then(function(data){
+            $scope.stats = data;
+         }, function(reason){
+            displayErrorMessage("Error loading files: "+ reason);
+         });
     }
 
     $scope.purge = function () {
@@ -32,30 +45,29 @@ function LoaderCtrl($scope, $http, applicationsService) {
             if (confirmed) {
                 console.log("Purge data for application " + $scope.applicationName);
                 result = applicationsService.purge($scope.applicationName);
-                $('#info').html(result);
-                $('#info').show();
+                var promise = applicationsService.batchInsert($scope.applicationName, $scope.files);
+                promise.then(function(data){
+                          displaySuccessMessage("Application deleted successfully: "+data);
+                }, function(reason){
+                           displayErrorMessage("Error deleting application: "+ reason);
+                });
             } else {
                 console.log("Purge cancelled");
             }
         });
     }
-    /*
-$scope.remaining = function () {
-    var count = 0;
-    angular.forEach($scope.files, function (file) {
-        count += file.done ? 0 : 1;
-    });
-    return count;
-};
 
-$scope.archive = function () {
-    var oldFiles = $scope.files;
-    $scope.files = [];
-    angular.forEach(oldFiles, function (file) {
-        if (!file.done) $scope.files.push(file);
-    });
-};
-*/
+     function displayErrorMessage( msg ){
+            $('#msg').html(msg);
+            $('#msgBox').removeClass().addClass('alert alert-error');
+            $('#msgBox').show();
+     }
+
+    function displaySuccessMessage( msg ){
+           $('#msg').html(msg);
+           $('#msgBox').removeClass().addClass('alert alert-success');
+           $('#msgBox').show();
+    }
 }
 
 

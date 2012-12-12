@@ -9,9 +9,8 @@ angular.module('reportApp.filters', []).
     }
   }]).filter('displayStatus', function() {
         return function(input) {
-            console.log("displayStatus: "+input);
             if (input == 'OK')
                 return '\u2713';
-            return '<div class="alert alert-error>'+input+'</div>';
+            return 'ERR: '+input;
         };
   });;

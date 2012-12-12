@@ -10,7 +10,9 @@ function SchedulerCtrl($scope, $http, schedulerService) {
     $scope.requestRepeatIntervalInMinutes = 10; //default value
     $scope.state;
     $scope.endPointURL;
-    $scope.schedulers = schedulerService.listSchedulers();
+    $scope.allSchedulers = schedulerService.listSchedulers("");
+    $scope.schedulers;
+    $scope.filter = "";
 
     $scope.addScheduler = function () {
         $scope.schedulerId = null;
@@ -18,7 +20,7 @@ function SchedulerCtrl($scope, $http, schedulerService) {
         var promise = schedulerService.addScheduler(scheduler);
 
         promise.then(function (greeting) {
-            $scope.schedulers = schedulerService.listSchedulers();
+            $scope.schedulers = schedulerService.listSchedulers( $scope.filter );
             displaySuccessMessage('Scheduler successfully created');
         }, function (reason) {
             displayErrorMessage('Failed to create a new scheduler : ' + reason);
@@ -31,7 +33,7 @@ function SchedulerCtrl($scope, $http, schedulerService) {
                 console.log("Scheduler delete " + schedulerId);
                 var promise = schedulerService.deleteScheduler(schedulerId);
                 promise.then(function () {
-                    $scope.schedulers = schedulerService.listSchedulers();
+                    $scope.schedulers = schedulerService.listSchedulers( $scope.filter );
                     displaySuccessMessage('Scheduler successfully deleted');
                 }, function (reason) {
                     displayErrorMessage('Failed to delete the scheduler : ' + reason);
@@ -40,6 +42,24 @@ function SchedulerCtrl($scope, $http, schedulerService) {
                 console.log("Scheduler deletion cancelled for " + schedulerId);
             }
         });
+    }
+
+    $scope.search = function(){
+        var sList = [];
+        var promise = $scope.allSchedulers;
+        promise.then(function(schedulers){
+             for (var i=0; i < schedulers.length; i++)  {
+                   var s =  schedulers[i];
+                   var str =  s.applicationName + s.asName + s.serverName;
+                   if (str.match($scope.filter) != null){
+                         sList.push(s);
+                         console.log("MATH")
+                   }else{
+                       console.log("doesn't match")
+                   }
+             }
+             $scope.schedulers = sList;
+       });
     }
 
     /**
@@ -75,7 +95,7 @@ function SchedulerCtrl($scope, $http, schedulerService) {
         var scheduler = createSchedulerFromScopeVariable();
         var promise = schedulerService.updateScheduler(scheduler);
         promise.then(function () {
-            $scope.schedulers = schedulerService.listSchedulers();
+            $scope.schedulers = schedulerService.listSchedulers( $scope.filter );
             displaySuccessMessage('Scheduler successfully updated');
             $scope.schedulerId = null;
         }, function (reason) {
@@ -87,7 +107,7 @@ function SchedulerCtrl($scope, $http, schedulerService) {
        var promise = schedulerService.changeStatus(scheduler);
        promise.then(function(){
             //refresh list
-            $scope.schedulers = schedulerService.listSchedulers();
+            $scope.schedulers = schedulerService.listSchedulers( $scope.filter );
             displaySuccessMessage('Succeed to change status of the scheduler.' );
        }, function(reason){
             displayErrorMessage('Failed to change status of the scheduler : ' + reason);

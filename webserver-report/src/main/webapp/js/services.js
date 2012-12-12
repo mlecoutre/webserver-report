@@ -145,7 +145,7 @@ angular.module('reportApp.services', [])
     // Create the application service
     function SchedulerService($http, $q) {
 
-        this.listSchedulers = function () {
+        this.listSchedulers = function (filter) {
             console.log("listScheduler service");
             var deferred = $q.defer();
             $http({

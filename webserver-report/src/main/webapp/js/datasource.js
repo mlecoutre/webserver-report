@@ -83,7 +83,8 @@
     function initChart() {
         chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'memoryContainer'
+                renderTo: 'memoryContainer',
+                zoomType: 'x'
             },
             title: 'Monitoring reports',
             yAxis: {

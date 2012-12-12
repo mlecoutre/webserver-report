@@ -7,8 +7,12 @@
     </ul>
 
     <div class="tab-content">
+        <form class="form-search pull-right">
+            <input type="text" class="input-medium search-query">
+            <button type="submit" class="btn btn-primary">filter</button>
+        </form>
         <div class="tab-pane active" id="listSchedulers">
-            <table class="table table-striped last5-template" id="lastAppointments">
+            <table class="table table-striped table-condensed table-hover">
                 <thead>
                 <tr>
                     <th>Applications</th>
@@ -28,8 +32,8 @@
                     <td>{{scheduler.asName}}</td>
                     <td>{{scheduler.requestRepeatIntervalInMinutes}}</td>
                     <td><a ng-click="changeStatus(scheduler)">{{scheduler.state}}</a></td>
-                    <td>{{scheduler.lastExecution}}</td>
-                    <td>{{scheduler.lastStatus}}</td>
+                    <td>{{scheduler.lastExecution | date:"MM/dd/yyyy hh:mm:ss"}}</td>
+                    <td>{{scheduler.lastStatus | displayStatus}}</td>
                     <td><a class="edit" ng-table-action="editScheduler(scheduler.schedulerId)"><i class="icon-edit"></i></a>
                         <a class="del" ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i
                                 class="icon-trash"></i></a></td>

@@ -48,7 +48,8 @@ function JmsCtrl($scope, $http, applicationsService) {
     function initChart() {
         chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'memoryContainer'
+                renderTo: 'memoryContainer',
+                zoomType: 'x'
             },
             title: 'JMS reports',
             yAxis: {

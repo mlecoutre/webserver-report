@@ -12,7 +12,7 @@
         </div>
         <div class="span4">
             <div class="btn-group appli-button-grp">
-                <a href="#statsModal" role="button" class="btn btn-primary" ng-click="stats()" data-toggle="modal">Get
+                <a href="#statsModal" class="btn btn-primary" ng-click="stats()" data-toggle="modal">Get
                     stats</a>
 
                 <input type="button" id="purge" class="btn" ng-click="purge()" value="Purge"/>
@@ -33,17 +33,15 @@
             <input class="btn" type="submit" value="add">
         </form>
     </div>
-    </form>
     <div class="btn-group">
         <a href="" ng-click="load()" class="btn btn-primary">Load on server</a>
         <a href="" ng-click="reset()" class="btn">Reset</a>
     </div>
-    <p> &nbsp;
+    <p> &nbsp;</p>
 
     <div id="info" class="alert alert-success hide">
 
     </div>
-    </p>
 
     <!-- Modal -->
     <div id="statsModal" tabindex="-1" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel"
@@ -54,8 +52,6 @@
         </div>
         <div class="modal-body">
             <label>Count elements<input type="text" ng-model="stats.nbElements" disabled></label>
-            <label>Start date<input type="text" ng-model="startDate" disabled></label>
-            <label>End date<input type="text" ng-model="endDate" disabled></label>
 
             <label>Servers</label>
 

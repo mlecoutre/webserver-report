@@ -13,6 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.6.4</slf4j.version>
+        <target>DEV</target>
     </properties>
 
 
@@ -84,7 +85,6 @@
             <version>2.2.2</version>
             <scope>provided</scope>
         </dependency>
-
 
 
         <dependency>
@@ -311,16 +311,21 @@
 
     <build>
         <finalName>report</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources/${target}/</directory>
+            </resource>
+        </resources>
         <plugins>
-        
-        	<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-        
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -335,6 +340,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+
         </plugins>
     </build>
 </project>

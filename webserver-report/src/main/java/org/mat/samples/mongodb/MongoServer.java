@@ -16,9 +16,6 @@ public class MongoServer {
         //Look for that variable and default to 8080 if it isn't there.
         String webPort = System.getenv("PORT");
 
-        //By Default on DEV ENVIRONMENT, Scheduler is disabled.
-        System.setProperty("DISABLE_SCHEDULER", "true");
-
         if (webPort == null || webPort.isEmpty()) {
             webPort = "9090";
         }

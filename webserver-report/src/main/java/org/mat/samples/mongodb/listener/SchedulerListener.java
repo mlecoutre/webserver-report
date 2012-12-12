@@ -1,29 +1,24 @@
 package org.mat.samples.mongodb.listener;
 
 
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
+import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.policy.SchedulerPolicy;
+import org.mat.samples.mongodb.scheduler.MonitorJob;
+import org.mat.samples.mongodb.scheduler.PurgeHistoryJob;
+import org.mat.samples.mongodb.utils.ConfigurationManager;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.mat.samples.mongodb.Constants;
-import org.mat.samples.mongodb.policy.SchedulerPolicy;
-import org.mat.samples.mongodb.scheduler.MonitorJob;
-import org.mat.samples.mongodb.scheduler.PurgeHistoryJob;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * @author mlecoutre
@@ -36,50 +31,51 @@ public class SchedulerListener implements ServletContextListener, Constants {
     // Grab the Scheduler instance from the Factory
     private static Scheduler scheduler;
 
-	private int purgeHistoryHour = 23;
-	private int purgeHistoryMinutes = 0;
+    private int purgeHistoryHour = ConfigurationManager.givePropertyAsInt("purgeHistoryHour");
+    private int purgeHistoryMinutes = ConfigurationManager.givePropertyAsInt("purgeHistoryMinutes");
 
     public SchedulerListener() {
-    	super();
+        super();
     }
-    
+
     public SchedulerListener(int purgeHistoryHour, int purgeHistoryMinutes) {
-		super();
-		this.purgeHistoryHour = purgeHistoryHour;
-		this.purgeHistoryMinutes = purgeHistoryMinutes;
-	}
-    
-	public int getPurgeHistoryHour() {
-		return purgeHistoryHour;
-	}
+        super();
+        this.purgeHistoryHour = purgeHistoryHour;
+        this.purgeHistoryMinutes = purgeHistoryMinutes;
+    }
 
-	public void setPurgeHistoryHour(int purgeHistoryHour) {
-		this.purgeHistoryHour = purgeHistoryHour;
-	}
+    public int getPurgeHistoryHour() {
+        return purgeHistoryHour;
+    }
 
-	public int getPurgeHistoryMinutes() {
-		return purgeHistoryMinutes;
-	}
+    public void setPurgeHistoryHour(int purgeHistoryHour) {
+        this.purgeHistoryHour = purgeHistoryHour;
+    }
 
-	public void setPurgeHistoryMinutes(int purgeHistoryMinutes) {
-		this.purgeHistoryMinutes = purgeHistoryMinutes;
-	}
+    public int getPurgeHistoryMinutes() {
+        return purgeHistoryMinutes;
+    }
 
-	@Override
+    public void setPurgeHistoryMinutes(int purgeHistoryMinutes) {
+        this.purgeHistoryMinutes = purgeHistoryMinutes;
+    }
+
+    @Override
     public void contextInitialized(ServletContextEvent event) {
         try {
-            String isDisable = System.getProperty("DISABLE_SCHEDULER");
-            if ("true".equalsIgnoreCase(isDisable)) {
+            String strDisable = ConfigurationManager.giveProperty("scheduler.enabled");
+            boolean isDisable = "false".equalsIgnoreCase(strDisable);
+            if (isDisable) {
                 logger.warn("WARNING: SCHEDULER ARE DISABLED");
             } else {
                 logger.warn("STARTING SCHEDULER");
                 scheduler = StdSchedulerFactory.getDefaultScheduler();
 
                 scheduler.start();
-                
+
                 SchedulerPolicy.initSchedulers();
-				schedulePurgeHistory(purgeHistoryHour, purgeHistoryMinutes);
-                                
+                schedulePurgeHistory(purgeHistoryHour, purgeHistoryMinutes);
+
             }
         } catch (SchedulerException e) {
             logger.error("Error during Scheduler initialization", e);
@@ -87,14 +83,14 @@ public class SchedulerListener implements ServletContextListener, Constants {
     }
 
     private void schedulePurgeHistory(int hour, int minutes) throws SchedulerException {
-		
-    	if (null == scheduler)
+
+        if (null == scheduler)
             return;
 
         // define the job and tie it to our HelloJob class
         String jobName = PurgeHistoryJob.class.getSimpleName();
-        String groupName = "purges";        
-        
+        String groupName = "purges";
+
         JobKey jobKey = new JobKey(jobName, groupName);
         JobDetail job = newJob(PurgeHistoryJob.class)
                 .withIdentity(jobKey)
@@ -107,9 +103,9 @@ public class SchedulerListener implements ServletContextListener, Constants {
                 .build();
 
         scheduler.scheduleJob(job, trigger);
-	}
+    }
 
-	/**
+    /**
      * Close the scheduler
      *
      * @param event ServletContextEvent not used
@@ -125,7 +121,8 @@ public class SchedulerListener implements ServletContextListener, Constants {
 
     /**
      * schedule a job
-     * @param aScheduler
+     *
+     * @param aScheduler   scheduler to start
      * @throws SchedulerException
      */
     public static void schedule(org.mat.samples.mongodb.vo.Scheduler aScheduler) throws SchedulerException {
@@ -138,9 +135,9 @@ public class SchedulerListener implements ServletContextListener, Constants {
 
         // define the job and tie it to our HelloJob class
         String jobName = buildJobName(aScheduler);
-        String groupName = buildJobGroupName(aScheduler);        
+        String groupName = buildJobGroupName(aScheduler);
         JobKey jobKey = new JobKey(jobName, groupName);
-        
+
         JobDetail job = newJob(MonitorJob.class)
                 .withIdentity(jobKey)
                 .usingJobData(dataMap)
@@ -155,50 +152,50 @@ public class SchedulerListener implements ServletContextListener, Constants {
 
         scheduler.scheduleJob(job, trigger);
     }
-    
-    
+
+
     /**
      * remove a scheduled job
+     *
      * @param oldScheduler
-     * @return
+     * @return  boolean value
      * @throws SchedulerException
      */
     public static boolean unSchedule(
-			org.mat.samples.mongodb.vo.Scheduler oldScheduler) throws SchedulerException {
+            org.mat.samples.mongodb.vo.Scheduler oldScheduler) throws SchedulerException {
 
-    	if (null == scheduler)
+        if (null == scheduler)
             return true;
-    	
-    	String jobName = buildJobName(oldScheduler);
+
+        String jobName = buildJobName(oldScheduler);
         String groupName = buildJobGroupName(oldScheduler);
-    	JobKey jobKey = new JobKey(jobName, groupName);
-    	
-    	boolean success = true;
-    	if (scheduler.checkExists(jobKey)) {
-    		success = scheduler.deleteJob(jobKey);
+        JobKey jobKey = new JobKey(jobName, groupName);
+
+        boolean success = true;
+        if (scheduler.checkExists(jobKey)) {
+            success = scheduler.deleteJob(jobKey);
             logger.info(String.format("unSchedule %s", jobName));
-    	}
-    	
-		return success;
-    	
-	}
+        }
 
-	private static String buildJobName(
-			org.mat.samples.mongodb.vo.Scheduler aScheduler) {
-		String jobName = aScheduler.getApplicationName() + "/" + aScheduler.getServerName() + "/" + aScheduler.getAsName();
-		return jobName;
-	}
+        return success;
 
-	private static String buildJobGroupName(
-			org.mat.samples.mongodb.vo.Scheduler aScheduler) {
-		String groupName = aScheduler.getApplicationName() + "/" + aScheduler.getServerName();
-		return groupName;
-	}
+    }
+
+    private static String buildJobName(
+            org.mat.samples.mongodb.vo.Scheduler aScheduler) {
+        return aScheduler.getApplicationName() + "/" + aScheduler.getServerName() + "/" + aScheduler.getAsName();
+    }
+
+    private static String buildJobGroupName(
+            org.mat.samples.mongodb.vo.Scheduler aScheduler) {
+        return aScheduler.getApplicationName() + "/" + aScheduler.getServerName();
+
+    }
 
     // make available scheduler
     public static Scheduler getScheduler() {
         return scheduler;
     }
-    
+
 
 }

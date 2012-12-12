@@ -7,10 +7,7 @@ package org.mat.samples.mongodb;
  */
 public interface Constants {
 
-
-    public static final String MONGO_SERVER = "dun-tst-devf01"; //"dun-tst-devf01";
-    public static final int MONGO_PORT = 27017;
-    public static final String MONGO_DB = "mydb";
+    public static final String CONFIGURATION_PROPERTIES = "/configuration.properties";
 
     public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 

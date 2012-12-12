@@ -2,9 +2,8 @@ package org.mat.samples.mongodb.listener;
 
 import com.mongodb.DB;
 import com.mongodb.Mongo;
-
-import org.bson.BSONCallback;
 import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.utils.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class MongoListener implements ServletContextListener, Constants {
 
-    private Logger logger = LoggerFactory.getLogger(MongoListener.class);
+    private static Logger logger = LoggerFactory.getLogger(MongoListener.class);
 
 
     private static DB mongoDB;
@@ -37,9 +36,11 @@ public class MongoListener implements ServletContextListener, Constants {
 
     public MongoListener() {
         logger.info("Initialize connection to mongo DB");
-        this.db = MONGO_DB;
-        this.server = MONGO_SERVER;
-        this.port = MONGO_PORT;
+
+        this.db = ConfigurationManager.giveProperty("datastore.db");
+        this.server = ConfigurationManager.giveProperty("datastore.host");
+        String strPort = ConfigurationManager.giveProperty("datastore.port");
+        this.port = new Integer(strPort);
     }
 
     public MongoListener(String server, int port, String db) {

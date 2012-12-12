@@ -32,7 +32,7 @@
                     <td>{{scheduler.asName}}</td>
                     <td>{{scheduler.requestRepeatIntervalInMinutes}}</td>
                     <td><a ng-click="changeStatus(scheduler)">{{scheduler.state}}</a></td>
-                    <td>{{scheduler.lastExecution | date:"MM/dd/yyyy hh:mm:ss"}}</td>
+                    <td>{{scheduler.lastExecution | date:"MM/dd/yyyy HH:mm:ss"}}</td>
                     <td>{{scheduler.lastStatus | displayStatus}}</td>
                     <td><a class="edit" ng-table-action="editScheduler(scheduler.schedulerId)"><i class="icon-edit"></i></a>
                         <a class="del" ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i

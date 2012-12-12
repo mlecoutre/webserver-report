@@ -70,9 +70,7 @@ function JmsCtrl($scope, $http, applicationsService) {
             },
             tooltip: {
                 formatter: function () {
-
-                    return $.datepicker.formatDate('yy-mm-dd', (new Date(this.x))) + ' : ' + this.y;
-                    //return this.y + "Mb";
+                    return moment(this.x).format('LLLL') + ', ' + this.y +' connections';
                 }
             },
             series: []

@@ -3,11 +3,11 @@
 
     <groupId>am.projects.webserver-report</groupId>
     <artifactId>report</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>webserver-report</name>
-    <url>http://maven.apache.org</url>
+    <url>http://web-java</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

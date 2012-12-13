@@ -320,8 +320,7 @@ public class SchedulerPolicy implements Constants {
 
 		if (res) {
 			unSchedule(oldScheduler);
-			if (Constants.STATUS_RUNNING.equals(scheduler.getInitialState())
-					|| Constants.STATUS_RUNNING.equals(scheduler.getState())) {
+			if (Constants.STATUS_RUNNING.equals(scheduler.getState())) {
 				logger.info("Schedule " + scheduler.toString());
 				schedule(scheduler);
 			}

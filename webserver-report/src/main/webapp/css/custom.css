@@ -2,44 +2,23 @@
 	width:80%;
 }
 
-.selected-kid {
-	border-radius:5px;
-	-moz-border-radius:5px;
-	width:70px;
-	height:70px;
-	float:left;
-	display:block;
-	text-align:center;
-	overflow:hidden;
-	margin-right:2px;
-	margin-left:2px;
-}
 
-.disabled-kid {
-	-webkit-filter:grayscale(80%) blur(1px);
-	filter: grayscale(80%);
-	border-radius:5px;
-	-moz-border-radius:5px;
-}
+form.ng-invalid-required .control-group{background-color: red; color:yellow;}
 
-.liveKid {
-	width:70px;
-	height:70px;
-	float:left;
-	display:block;
-	text-align:center;
-	overflow:hidden;
-	margin:2px;
-}
-
-.small-picture {
-	width:20px;
-	height:20px;
-}
-
-.report-chart-container {
-	height:300px;
-	min-width:500px;
+.input-help {
+  display: none;
+  position:absolute;
+  z-index: 100;
+  top: -6px;
+  left: 160px;
+  width:200px;
+  padding:10px;
+  background:#fefefe;
+  font-size:.875em;
+  border-radius:5px;
+  box-shadow:0 1px 3px #aaa;
+  border:1px solid #ddd;
+  opacity: 0.9;
 }
 
 label {

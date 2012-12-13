@@ -71,8 +71,8 @@ function SchedulerCtrl($scope, $http, schedulerService) {
     /**
      * Initialize the update form
      */
-    $scope.editScheduler = function (schedulerId) {
-        var promise = schedulerService.findSchedulerById(schedulerId);
+    $scope.initScheduler = function (scheduler) {
+        var promise = schedulerService.findSchedulerById(scheduler.schedulerId);
 
         promise.then(function (scheduler) {
             $scope.schedulerId = scheduler.schedulerId;
@@ -112,7 +112,6 @@ function SchedulerCtrl($scope, $http, schedulerService) {
     $scope.changeStatus = function(scheduler){
        var promise = schedulerService.changeStatus(scheduler);
        promise.then(function(){
-            //refresh list
             $scope.schedulers = schedulerService.listSchedulers( $scope.filter );
             displaySuccessMessage('Succeed to change status of the scheduler.' );
        }, function(reason){

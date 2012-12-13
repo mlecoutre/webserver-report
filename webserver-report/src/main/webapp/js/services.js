@@ -8,7 +8,6 @@ angular.module('reportApp.services', [])
     // Create the application service
     function ApplicationService($http, $q) {
         this.retrieveApps = function () {
-            console.log("retrieveApps");
             var deferred = $q.defer();
             $http({
                 method: 'GET',
@@ -26,7 +25,6 @@ angular.module('reportApp.services', [])
         }
 
         this.retrievePhysicalServers = function (applicationName) {
-            console.log("retrievePhysicalServers");
             var deferred = $q.defer();
             $http({
                 method: 'GET',
@@ -44,7 +42,6 @@ angular.module('reportApp.services', [])
         }
 
         this.retrieveASS = function (applicationName) {
-            console.log("retrieveASS");
             var deferred = $q.defer();
             $http({
                 method: 'GET',
@@ -80,7 +77,6 @@ angular.module('reportApp.services', [])
         }
 
         this.retrieveDataSources = function (applicationName, server, as) {
-            console.log("retrieveDataSources");
             var deferred = $q.defer();
             $http({
                 method: 'GET',
@@ -115,7 +111,6 @@ angular.module('reportApp.services', [])
         }
 
         this.batchInsert = function (applicationName, files) {
-            console.log("applicationsService.batchInsert");
             var deferred = $q.defer();
             $http({
                 method: 'POST',
@@ -158,7 +153,6 @@ angular.module('reportApp.services', [])
     function SchedulerService($http, $q) {
 
         this.listSchedulers = function (filter) {
-            console.log("listScheduler service");
             var deferred = $q.defer();
             $http({
                 method: 'GET',
@@ -240,7 +234,7 @@ angular.module('reportApp.services', [])
                 return deferred.resolve(data);
             })
                 .error(function (data, status, headers, config) {
-                console.log("ERROR SchedulerService - addScheduler()");
+                console.log("ERROR SchedulerService - addScheduler(: "+data);
                 return deferred.reject(data);
             });
             return deferred.promise;

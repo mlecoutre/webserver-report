@@ -17,10 +17,11 @@ function LoaderCtrl($scope, $http, applicationsService) {
 
     //button load, that trigger the batch insert
     $scope.load = function () {
-        console.log("load");
+
         var promise = applicationsService.batchInsert($scope.applicationName, $scope.files);
         promise.then(function(data){
             displaySuccessMessage("Files loaded successfully: "+data);
+              $scope.files = [];
         }, function(reason){
              displayErrorMessage("Error loading files: "+ reason);
         });
@@ -31,7 +32,7 @@ function LoaderCtrl($scope, $http, applicationsService) {
          $scope.applicationName = "";
    }
 
-    $scope.stats = function () {
+    $scope.initStats = function () {
          var promise = applicationsService.getStats($scope.applicationName);
          promise.then(function(data){
             $scope.stats = data;

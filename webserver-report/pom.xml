@@ -16,6 +16,11 @@
         <target>DEV</target>
     </properties>
 
+    <scm>
+        <connection>scm:git:https://github.com/mlecoutre/webserver-report.git</connection>
+        <url>http://github.com/mlecoutre/webserver-report.git</url>
+        <developerConnection>scm:git:https://github.com/mlecoutre/webserver-report.git</developerConnection>
+    </scm>
 
     <dependencies>
 
@@ -164,8 +169,24 @@
 
             </dependencies>
 
+
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-release-plugin</artifactId>
+                            <version>2.2.1</version>
+                        </plugin>
+                    </plugins>
+
+                </pluginManagement>
                 <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                    </plugin>
 
                     <!-- TOMCAT PLUGIN -->
 

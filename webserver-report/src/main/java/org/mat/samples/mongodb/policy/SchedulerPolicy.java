@@ -91,6 +91,9 @@ public class SchedulerPolicy implements Constants {
 
 	// launch Schedulers as jobs
 	public static void initSchedulers() throws SchedulerException {
+		
+		// first check if index exist
+		checkIndex();
 
 		// launch the schedulers
 		List<Scheduler> schedulers = listSchedulers();
@@ -223,7 +226,7 @@ public class SchedulerPolicy implements Constants {
 		String id = null;
 
 		WriteResult result = collection.insert(doc);
-		int success = result.getN();
+		//int success = result.getN();
 
 		//if (success > 0) {
 			logger.info(String.format("Creation of  %s.", scheduler.toString()));
@@ -308,13 +311,19 @@ public class SchedulerPolicy implements Constants {
 		scheduler.setSchedulerId(schedulerId);
 
 		DBCollection collection = giveCollection();
-
+		
+		DBObject query = new BasicDBObject().append("_id", new ObjectId(schedulerId));
+		
 		String jsonString = mapper.writeValueAsString(scheduler);
 		DBObject doc = (DBObject) JSON.parse(jsonString);
+		//doc.put("_id", new ObjectId(schedulerId));
+		if (doc.containsField("_id")) {
+			doc.removeField("_id");
+		}
+		
+		DBObject newDoc = new BasicDBObject().append("$set", doc); 
 
-		doc.put("_id", new ObjectId(schedulerId));
-
-		WriteResult result = collection.save(doc);
+		WriteResult result = collection.update(query, newDoc);
 		logger.info(String.format("Update scheduler   %s.", scheduler));
 		boolean res = (result.getN() > 0);
 

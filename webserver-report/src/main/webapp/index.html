@@ -3,8 +3,21 @@
 <head>
     <title>WebServer Report</title>
     <link rel="stylesheet" href="lib/css/jquery-ui-1.9.1.custom.min.css" type="text/css"/>
-    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="lib/css/angular-ui.min.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet /">
+
+    <!--[if lte IE 8]>
+    <script>
+        // The ieshiv takes care of our ui.directives, bootstrap module directives and
+        // AngularJS's ng-view, ng-include, ng-pluralize and ng-switch directives.
+        // However, IF you have custom directives (yours or someone else's) then
+        // enumerate the list of tags in window.myCustomTags
+
+        window.myCustomTags = [ 'ngShowTab', 'ngFocusOut', 'appVersion',  'ngTableAction' ]; // optional
+    </script>
+    <script src="lib/js/angular-ui-ieshiv.js"></script>
+    <![endif]-->
 </head>
 <body ng-app="reportApp">
 
@@ -23,6 +36,7 @@
                     <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                         <li><a tabindex="-1" href="#/loader">Manual</a></li>
                         <li><a tabindex="-1" href="#/scheduler">Scheduler</a></li>
+                        <li><a tabindex="-1" href="#/sample">Sample</a></li>
                     </ul>
 
                 </li>
@@ -72,34 +86,16 @@
     </div>
     <div ng-view></div>
 
-
 </div>
-
 
 <div>
     <footer>
         <p>&copy; ITSWE TAE 2012</p>
-
         <div>version: <span app-version></span></div>
     </footer>
 
 </div>
 <!-- /container -->
-
-<script type="text/x-template" id="options-template">
-    {{#.}}
-    <option value="{{.}}"></option>
-    {{/.}}
-</script>
-
-<script type="text/x-template" id="list-template">
-    <ul>
-        {{#.}}
-        <li>{{.}}</li>
-        {{/.}}
-    </ul>
-</script>
-
 
 <script src="lib/js/jquery-1.8.2.js"></script>
 <script src="lib/js/jquery-ui-1.9.1.custom.min.js"></script>
@@ -107,7 +103,6 @@
 <script src="lib/js/bootstrap.min.js"></script>
 <script src="lib/js/bootbox.min.js"></script>
 <script src="lib/js/moment.min.js"></script>
-<script src="lib/js/mustache.js"></script>
 <script src="lib/js/highstock.js"></script>
 <script src="lib/js/highcharts-more.js"></script>
 <script src="lib/js/themes/gray.js"></script>
@@ -115,18 +110,24 @@
 <script src="js/utilities.js"></script>
 
 <!-- angular part-->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
-<!--//lib/js/angular.min.js"></script>-->
+<script src="lib/js/angular.min.js"></script>
+<script src="lib/js/angular-resource.min.js"></script>
+<script src="lib/js/angular-ui.min.js"></script>
+<script src="lib/js/angular-ui-ieshiv.min.js"></script>
 <script src="js/app.js"></script>
 <script src="js/services.js"></script>
+<script src="js/schedulersService.js"></script>
 <script src="js/filters.js"></script>
 <script src="js/directives.js"></script>
 
 <!-- Angular controllers -->
 <script src="js/loader.js"></script>
 <script src="js/jms.js"></script>
+<script src="js/memory.js"></script>
 <script src="js/scheduler.js"></script>
-
+<script src="js/sample.js"></script>
+<script src="js/datasource.js"></script>
+<script src="js/thread.js"></script>
 
 </body>
 </html>

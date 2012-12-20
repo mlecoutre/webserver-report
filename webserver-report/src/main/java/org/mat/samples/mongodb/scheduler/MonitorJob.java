@@ -18,35 +18,32 @@ import org.slf4j.LoggerFactory;
  */
 public class MonitorJob implements Job, Constants {
 
-	private Logger logger = LoggerFactory.getLogger(MonitorJob.class);
+    private Logger logger = LoggerFactory.getLogger(MonitorJob.class);
 
-	@Override
-	public void execute(JobExecutionContext jobExecutionContext)
-			throws JobExecutionException {
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext)
+            throws JobExecutionException {
 
-		Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
-				.getJobDataMap().get(Scheduler.class.getSimpleName());
+        Scheduler scheduler = (Scheduler) jobExecutionContext.getJobDetail()
+                .getJobDataMap().get(Scheduler.class.getSimpleName());
 
-		if (null != scheduler) {
-			
-			Date now = new Date();
-			
-			logger.info(String.format(
-					"START Job %s for AS %s for application %s",
-					scheduler.getAsName(), scheduler.getServerName(),
-					scheduler.getApplicationName()));
+        if (null != scheduler) {
 
-			String status = STATUS_OK;
-			try {
-				batchInsert(scheduler.getEndPointURL(),
-						scheduler.getApplicationName(), scheduler.getServerName(),
-						scheduler.getAsName());
-			} catch (Exception e) {
-				status = String.format("%s,  with exception: '%s'", STATUS_FAILED, e.getMessage());
-			}
-			
-			SchedulerPolicy.updateSchedulerStatus(scheduler.getSchedulerId(), now, status);
-		}
-	}
+            Date now = new Date();
+
+            logger.info("Start " + scheduler.toString());
+
+            String status = STATUS_OK;
+            try {
+                batchInsert(scheduler.getEndPointURL(),
+                        scheduler.getApplicationName(), scheduler.getServerName(),
+                        scheduler.getAsName());
+            } catch (Exception e) {
+                status = String.format("%s,  with exception: '%s'", STATUS_FAILED, e.getMessage());
+            }
+
+            SchedulerPolicy.updateSchedulerStatus(scheduler.getSchedulerId(), now, status);
+        }
+    }
 
 }

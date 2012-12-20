@@ -73,7 +73,7 @@ public class SchedulerPolicy implements Constants {
 		if (!exist) {
 			BasicDBObject dbIndex = new BasicDBObject();
 
-			// indexex field is ascending (1) or descending (-1)
+			// index field is ascending (1) or descending (-1)
 			dbIndex.append("applicationName", 1);
 			dbIndex.append("serverName", 1);
 			dbIndex.append("asName", 1);

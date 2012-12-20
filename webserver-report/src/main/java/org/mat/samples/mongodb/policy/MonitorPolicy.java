@@ -8,10 +8,13 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
 import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
 import org.mat.samples.mongodb.vo.ApplicationStats;
@@ -36,6 +39,34 @@ public class MonitorPolicy implements Constants {
     private static Logger logger = LoggerFactory.getLogger(MonitorPolicy.class);
 
     /**
+     * Check if index exist for collection
+     *
+     * @param collection collection to update
+     */
+    public static void checkIndex(DBCollection collection) {
+        List<DBObject> indexes = collection.getIndexInfo();
+
+        if (indexes == null || indexes.size() <= 1) {
+            logger.info("Create indexes on the collection " + collection.getName());
+            BasicDBObject dbIndex = new BasicDBObject();
+
+            // index field is ascending (1) or descending (-1)
+            dbIndex.append("timestamp", 1);
+            dbIndex.append("applicationName", 1);
+            dbIndex.append("serverName", 1);
+            dbIndex.append("asName", 1);
+            dbIndex.append("type", 1);
+
+            // not unique index
+            dbIndex.append("unique", false);
+            // remove duplicated keys
+            //  dbIndex.append("dropDups", true);
+            collection.ensureIndex(dbIndex);
+        }
+
+    }
+
+    /**
      * List DataSources
      *
      * @param applicationName Mongo collection to request
@@ -45,7 +76,7 @@ public class MonitorPolicy implements Constants {
      */
     public static List<String> listDataSources(String applicationName, String serverName, String asName) {
         DB db = MongoListener.getMongoDB();
-        DBCollection coll = db.getCollection(applicationName);
+        DBCollection collection = db.getCollection(applicationName);
         BasicDBObject filter = new BasicDBObject();
         filter.put("type", "was.pool.ds");
 
@@ -55,7 +86,7 @@ public class MonitorPolicy implements Constants {
         if (asName != null)
             filter.put("asName", asName);
 
-        List mList = coll.distinct("id", filter);
+        List<String> mList = collection.distinct("id", filter);
         logger.info("listDataSources: " + mList.size());
         return mList;
     }
@@ -72,7 +103,7 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
         BasicDBObject filter = new BasicDBObject();
-        filter.put("type", "was.pool.qcf");
+        filter.put("type","was.pool.qcf");
 
         if (serverName != null)
             filter.put("server", serverName);
@@ -111,7 +142,7 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
 
-        List mList = coll.distinct("server");
+        List<String> mList = coll.distinct("server");
         logger.info("listServers: " + mList.size());
         return mList;
     }
@@ -137,16 +168,22 @@ public class MonitorPolicy implements Constants {
      * @param applicationName Mongo collection to be requested.
      * @param serverName      server Name
      * @param asName          Application server name
+     * @param startDate       start interval
+     * @param endDate         end interval
      * @param writer          output writer
      * @throws Exception return all error
      *                   <p/>
      *                   TODO manage cache or local file storage to avoid to call DB for each request.
      */
-    public static void requestMemory(String memory, String applicationName, String serverName, String asName, OutputStream writer) throws Exception {
+    public static void requestMemory(String memory, String applicationName, String serverName, String asName, Date startDate, Date endDate, OutputStream writer) throws Exception {
 
 
         DB db = MongoListener.getMongoDB();
-        DBCollection coll = db.getCollection(applicationName);
+        DBCollection collection = db.getCollection(applicationName);
+
+        //Create index  if needed
+        checkIndex(collection);
+
         BasicDBObject fields = new BasicDBObject();
         fields.put("sizemb", 1);
         fields.put("timestamp", 1);
@@ -154,6 +191,7 @@ public class MonitorPolicy implements Constants {
         fields.put("_id", 0);
 
         BasicDBObject filter = new BasicDBObject();
+        filter.put("type", "memory");
         filter.put("id", memory);
         if (serverName != null) {
             filter.put("server", serverName);
@@ -161,9 +199,13 @@ public class MonitorPolicy implements Constants {
         if (asName != null) {
             filter.put("asName", asName);
         }
+
+        if (startDate != null && endDate != null)
+            filter.put("timestamp", new BasicDBObject("$gte", startDate).append("$lte", endDate));
+
         BasicDBObject sortDBO = new BasicDBObject();
         sortDBO.put("timestamp", "-1");
-        DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
+        DBCursor cursor = collection.find(filter, fields).sort(sortDBO);
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
@@ -171,8 +213,8 @@ public class MonitorPolicy implements Constants {
 
             while (cursor.hasNext()) {
                 DBObject obj = cursor.next();
-                String ts = (String) obj.get("timestamp");
-                long milli = (sdf.parse(ts)).getTime();
+                Date timestamp = (Date) obj.get("timestamp");
+                long milli = timestamp.getTime();
                 String size = (String) obj.get("sizemb");
                 writer.write(String.format("[%s, %s]", milli, size).getBytes());
                 if (cursor.hasNext())
@@ -200,12 +242,12 @@ public class MonitorPolicy implements Constants {
     }
 
     /**
-     * purge datas which are oldest than oldestDate
+     * Purge data which are oldest than oldestDate
      *
-     * @param applicationName
-     * @param serverName
-     * @param asName
-     * @param oldestDate
+     * @param applicationName application alias name
+     * @param serverName      physical server name
+     * @param asName          AS name
+     * @param oldestDate      max date
      * @throws Exception
      */
     public static void purgeHistory(String applicationName, String serverName, String asName, String oldestDate) throws Exception {
@@ -250,16 +292,23 @@ public class MonitorPolicy implements Constants {
     }
 
     /**
+     * Request Total Threads
+     *
      * @param applicationName Mongo collection to request
      * @param serverName      filter on serverName (can be null)
      * @param asName          filter on asName (can be null)
+     * @param startDate       start interval
+     * @param endDate         end interval
      * @param writer          output writer
      * @throws Exception
      */
-    public static void requestTotalThreads(String applicationName, String serverName, String asName, OutputStream writer) throws Exception {
+    public static void requestTotalThreads(String applicationName, String serverName, String asName, Date startDate, Date endDate, OutputStream writer) throws Exception {
 
         DB db = MongoListener.getMongoDB();
-        DBCollection coll = db.getCollection(applicationName);
+        DBCollection collection = db.getCollection(applicationName);
+
+        //Create index  if needed
+        checkIndex(collection);
 
         BasicDBObject fields = new BasicDBObject();
         fields.put("count", 1);
@@ -275,17 +324,21 @@ public class MonitorPolicy implements Constants {
         if (asName != null) {
             filter.put("asName", asName);
         }
+        if (startDate != null && endDate != null)
+            filter.put("timestamp", new BasicDBObject("$gte", startDate).append("$lte", endDate));
+
+
         BasicDBObject sortDBO = new BasicDBObject();
         sortDBO.put("timestamp", "-1");
-        DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
+        DBCursor cursor = collection.find(filter, fields).sort(sortDBO);
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             writer.write("[\n".getBytes());
             while (cursor.hasNext()) {
                 DBObject obj = cursor.next();
-                String ts = (String) obj.get("timestamp");
-                long milli = (sdf.parse(ts)).getTime();
+                Date timestamp = (Date) obj.get("timestamp");
+                long milli = timestamp.getTime();
                 String used = (String) obj.get("count");
                 writer.write(String.format("[%s, %s]", milli, used).getBytes());
                 if (cursor.hasNext())
@@ -293,7 +346,7 @@ public class MonitorPolicy implements Constants {
             }
             writer.write("]\n".getBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while writing  total threads on the output stream", e);
         } finally {
             cursor.close();
         }
@@ -306,10 +359,12 @@ public class MonitorPolicy implements Constants {
      * @param applicationName Mongo Collection to request
      * @param serverName      add filter on server (can be null)
      * @param asName          add filter on seName (can be null)
+     * @param startDate       start interval
+     * @param endDate         end interval
      * @param writer          output stream writer
      * @throws Exception TODO manage cache or local file storage to avoid to call DB for each request.
      */
-    public static void requestUsedConnection(String idObject, String applicationName, String serverName, String asName, OutputStream writer) throws Exception {
+    public static void requestUsedConnection(String idObject, String applicationName, String serverName, String asName, Date startDate, Date endDate, OutputStream writer) throws Exception {
 
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
@@ -328,6 +383,9 @@ public class MonitorPolicy implements Constants {
         if (asName != null) {
             filter.put("asName", asName);
         }
+        if (startDate != null && endDate != null)
+            filter.put("timestamp", new BasicDBObject("$gte", startDate).append("$lte", endDate));
+
         BasicDBObject sortDBO = new BasicDBObject();
         sortDBO.put("timestamp", "-1");
         DBCursor cursor = coll.find(filter, fields).sort(sortDBO);
@@ -337,8 +395,8 @@ public class MonitorPolicy implements Constants {
             writer.write("[\n".getBytes());
             while (cursor.hasNext()) {
                 DBObject obj = cursor.next();
-                String ts = (String) obj.get("timestamp");
-                long milli = (sdf.parse(ts)).getTime();
+                Date timestamp = (Date) obj.get("timestamp");
+                long milli = timestamp.getTime();
                 String used = (String) obj.get("used");
                 writer.write(String.format("[%s, %s]", milli, used).getBytes());
                 if (cursor.hasNext())
@@ -370,25 +428,114 @@ public class MonitorPolicy implements Constants {
             bufferedReader = new BufferedReader(new InputStreamReader(yc.getInputStream()));
             String line = null;
             DB db = MongoListener.getMongoDB();
-            DBCollection coll = db.getCollection(applicationName);
-            long before = coll.count();
+            DBCollection collection = db.getCollection(applicationName);
+            //Create index  if needed
+            checkIndex(collection);
+            long before = collection.count();
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             while ((line = bufferedReader.readLine()) != null) {
 
                 DBObject doc = (DBObject) JSON.parse(line);
+                //manage timestamp as date, not as string.
+                String ts = (String) doc.get("timestamp");
+                Date eventTimestamp = null;
+                try {
+                    eventTimestamp = sdf.parse(ts);
+                } catch (ParseException pe) {
+                    logger.error("Error parsing date", pe);
+                }
+                doc.put("timestamp", eventTimestamp);
                 doc.put("server", serverName);
                 doc.put("asName", asName);
-                coll.insert(doc);
+                collection.insert(doc);
             }
-            nbElts = coll.count() - before;
+            nbElts = collection.count() - before;
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (Exception e) {
-                    //
+                    logger.error("Error trying to close the buffered reader", e);
                 }
             }
         }
         return nbElts;
+    }
+
+    /**
+     * Temporary method to update the model for timestamp modification
+     * @param applicationName
+     * @return
+     */
+    public static boolean updateModel(String applicationName) {
+        DB db = MongoListener.getMongoDB();
+        DBCollection collection = db.getCollection(applicationName);
+        SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
+        DBCursor cursor = collection.find();
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            Date eventTimestamp = null;
+            try {
+                String ts = (String) obj.get("timestamp");
+                eventTimestamp = sdf.parse(ts);
+            } catch (Exception e) {
+                logger.error("Error parsing date, maybe, it's already a date format: " + e.getMessage());
+                continue;
+            }
+
+            DBObject query = new BasicDBObject().append("_id", obj.get("_id"));
+
+            DBObject doc = new BasicDBObject().append("$set", new BasicDBObject()
+                    .append("timestamp", eventTimestamp)
+
+            );
+            logger.info(">>>" + eventTimestamp);
+
+            collection.update(query, doc);
+            obj.put("timestamp", eventTimestamp);
+        }   // end loop
+        logger.info("Process ended for " + applicationName);
+        return true;
+
+
+    }
+
+
+    /**
+     * Temporary method to update the model for timestamp modification
+     * @param applicationName
+     * @return
+     */
+    public static boolean updateType(String applicationName) {
+        DB db = MongoListener.getMongoDB();
+        DBCollection collection = db.getCollection(applicationName);
+        SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
+        DBCursor cursor = collection.find();
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            Date eventTimestamp = null;
+            try {
+                String ts = (String) obj.get("timestamp");
+                eventTimestamp = sdf.parse(ts);
+            } catch (Exception e) {
+                logger.error("Error parsing date, maybe, it's already a date format: " + e.getMessage());
+                continue;
+            }
+
+            DBObject query = new BasicDBObject().append("_id", obj.get("_id"));
+
+            DBObject doc = new BasicDBObject().append("$set", new BasicDBObject()
+                    .append("timestamp", eventTimestamp)
+
+            );
+            logger.info(">>>" + eventTimestamp);
+
+            collection.update(query, doc);
+            obj.put("timestamp", eventTimestamp);
+        }   // end loop
+        logger.info("Process ended for " + applicationName);
+        return true;
+
+
     }
 }

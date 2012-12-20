@@ -1,84 +1,43 @@
-(function ($) {
-    /** DOCUMENT READY - INITIALIZATION **/
-    $(document).ready(function () {
-        chart = initChart();
-        initApplication();
-    });
+function DataSourceCtrl($scope, $http, applicationsService) {
 
-        function initApplication() {
-            var reqDS = $.ajax({
-                type: 'GET',
-                contentType: 'application/json',
-                url: '/report/services/MonitorConfig/applications'
-            });
-            reqDS.done(function (applications) {
-                $('#applications').html(Mustache.to_html($('#options-template').html(), applications));
-            });
-        }
 
-    function initASs(applicationName) {
-        var reqDS = $.ajax({
-            type: 'GET',
-            contentType: 'application/json',
-            url: '/report/services/MonitorConfig/ass/' + applicationName
-        });
-        reqDS.done(function (ass) {
-            $('#ass').html(Mustache.to_html($('#options-template').html(), ass));
-        });
+    $scope.applicationName = "";
+    $scope.as = "";
+    $scope.server = "";
+    $scope.dataSource = "";
+
+    $scope.startDate = moment().subtract('days', 7).hours(0).minutes(0).seconds(0).toDate(); //
+    $scope.endDate = moment().add('days', 1).hours(0).minutes(0).seconds(0).toDate(); //
+
+    $scope.applications = applicationsService.retrieveApps();
+    $scope.ass = "";
+    $scope.servers = "";
+    $scope.dataSources;
+    $scope.chart = initChart();
+
+    $scope.doAppFocusOut = function () {
+        $scope.ass = applicationsService.retrieveASS($scope.applicationName);
+        $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
     }
 
-    function initServers(applicationName) {
-        var reqDS = $.ajax({
-            type: 'GET',
-            contentType: 'application/json',
-            url: '/report/services/MonitorConfig/servers/' + applicationName
-        });
-        reqDS.done(function (servers) {
-            $('#servers').html(Mustache.to_html($('#options-template').html(), servers));
-        });
-    }
+    $scope.showDS = function () {
+        console.log("showQCF");
+        $scope.dataSources = applicationsService.retrieveDataSources($scope.applicationName, $scope.server, $scope.as);
+        $('#dataSourceBox').show();
+    };
 
-    function initDataSourceList() {
-        var as = $('#selAS').val();
-        var server = $('#selServer').val();
-        var applicationName = $('#selApplicationName').val();
-        var reqDS = $.ajax({
-            type: 'GET',
-            contentType: 'application/json',
-            url: '/report/services/MonitorConfig/dataSources/' + applicationName + '/' + server + '/' + as
-        });
-        reqDS.done(function (dataSources) {
-            $('#dataSources').html(Mustache.to_html($('#options-template').html(), dataSources));
-            $('#dataSourceBox').show();
-            $('#showDS').toggleClass('btn-primary');
-            $('#display').toggleClass('btn-primary');
-        });
-    }
-
-    $("#selApplicationName").focusout(function(){
-        if(applicationName !== null && applicationName!= ""){
-            var applicationName = $('#selApplicationName').val();
-            initServers(applicationName);
-            initASs(applicationName);
-         }
-    });
-
-    $('#showDS').click(function () {
-        initDataSourceList();
-    });
-
-    $('#display').click(function () {
+  $scope.display = function () {
         var as = $('#selAS').val();
         var server = $('#selServer').val();
         var dataSource = $('#selDataSource').val();
         var applicationName = $('#selApplicationName').val();
         addDSChart(chart, 'used-connections', applicationName, server, as, dataSource);
-    });
+    };
 
-    $('#clear').click(function () {
+    $scope.clear = function () {
         while (chart.series.length > 0)
         chart.series[0].remove(true);
-    });
+    };
 
     function initChart() {
         chart = new Highcharts.Chart({
@@ -114,10 +73,15 @@
     }
 
     function addDSChart(chart, type, applicationName, server, as, ds) {
+        var strDate ='';
+        if ($scope.startDate != null)
+            strDate+= '&startDate='+$scope.startDate.getTime()
+        if ($scope.endDate != null)
+            strDate+= '&endDate=' + $scope.endDate.getTime();
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as + '&idObject=' + ds
+            url: '/report/monitor?action=' + type + '&applicationName=' + applicationName + '&server=' + server + '&as=' + as + '&idObject=' + ds + strDate
 
         });
         reqA.done(function (mem) {
@@ -129,4 +93,4 @@
         })
     }
 
-})(jQuery);
+}

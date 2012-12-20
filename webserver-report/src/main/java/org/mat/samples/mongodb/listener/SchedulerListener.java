@@ -21,6 +21,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
+ * Scheduler Listener
  * @author mlecoutre
  */
 @WebListener
@@ -157,7 +158,7 @@ public class SchedulerListener implements ServletContextListener, Constants {
     /**
      * remove a scheduled job
      *
-     * @param oldScheduler
+     * @param oldScheduler scheduler to stop
      * @return  boolean value
      * @throws SchedulerException
      */

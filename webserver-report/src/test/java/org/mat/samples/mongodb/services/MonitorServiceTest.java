@@ -1,5 +1,7 @@
 package org.mat.samples.mongodb.services;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.util.JSON;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,15 +53,19 @@ public class MonitorServiceTest {
     @Test
     public void testRequestUsedConnection() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MonitorPolicy.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        MonitorPolicy.requestUsedConnection("DS_STEELUSER_MASTER", APPLICATION_NAME, SERVER_NAME, AS_NAME, null, null, baos);
         assertNotNull("TotalThreads should not be null", baos.toString());
     }
 
     @Test
     public void testRequestTotalThreads() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MonitorPolicy.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, baos);
+        MonitorPolicy.requestTotalThreads(APPLICATION_NAME, SERVER_NAME, AS_NAME, null, null, baos);
+
+        List mThreads = (List) JSON.parse(baos.toString());
+
         assertNotNull("TotalThreads should not be null", baos.toString());
+        assertTrue("Nb threads measures should be equals to 144", mThreads.size() == 144);
     }
 
     @Test

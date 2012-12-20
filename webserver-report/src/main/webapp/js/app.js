@@ -2,7 +2,7 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('reportApp', ['reportApp.filters', 'reportApp.services', 'reportApp.directives']).
+angular.module('reportApp', ['reportApp.filters', 'reportApp.services', 'reportApp.directives', 'schedService', 'ui']).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.
         when('/loader', {
@@ -12,9 +12,10 @@ angular.module('reportApp', ['reportApp.filters', 'reportApp.services', 'reportA
         when('/scheduler', {templateUrl: 'partials/scheduler.html', controller: SchedulerCtrl}).
         when('/index', {templateUrl: 'partials/index.html'}).
         when('/about', {templateUrl: 'partials/about.html'}).
-        when('/memory', {templateUrl: 'partials/memory.html'}).
-        when('/datasource', {templateUrl: 'partials/datasource.html'}).
-        when('/thread', {templateUrl: 'partials/thread.html'}).
+        when('/memory', {templateUrl: 'partials/memory.html', controller: MemoryCtrl}).
+        when('/datasource', {templateUrl: 'partials/datasource.html', controller: DataSourceCtrl}).
+        when('/sample', {templateUrl: 'partials/sample.html', controller: SampleCtrl}).
+        when('/thread', {templateUrl: 'partials/thread.html', controller: ThreadCtrl}).
         when('/jms', {templateUrl: 'partials/jms.html', controller: JmsCtrl}).
         otherwise({redirectTo: '/index'});
   }]);

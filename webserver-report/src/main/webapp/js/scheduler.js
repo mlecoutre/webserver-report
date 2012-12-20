@@ -60,6 +60,9 @@ function SchedulerCtrl($scope, $http, schedulerService) {
              for (var i=0; i < schedulers.length; i++)  {
                    var s =  schedulers[i];
                    var str =  s.applicationName + s.asName + s.serverName;
+                   if(str == null || str == 0){
+                        continue;
+                   }
                    if (str.match($scope.filter) != null){
                          sList.push(s);
                    }

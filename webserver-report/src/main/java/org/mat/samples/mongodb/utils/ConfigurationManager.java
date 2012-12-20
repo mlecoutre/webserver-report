@@ -37,6 +37,8 @@ public class ConfigurationManager {
             InputStream stream = ConfigurationManager.class.getResourceAsStream(Constants.CONFIGURATION_PROPERTIES);
             try {
                 configuration.load(stream);
+               String env =  configuration.getProperty("application.env");
+                logger.info(String.format("Load configuration properties for [%s] environment", env));
             } catch (IOException e) {
                 logger.error("Error trying to initialize configuration manager", e);
                 return true;

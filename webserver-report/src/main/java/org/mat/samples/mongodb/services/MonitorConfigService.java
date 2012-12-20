@@ -91,4 +91,11 @@ public class MonitorConfigService {
         }
         return true;
     }
+
+    @GET
+    @Path("/update/{applicationName}")
+    public boolean update(@PathParam("applicationName") String applicationName){
+        logger.info("update "+applicationName);
+        return MonitorPolicy.updateModel(applicationName);
+    }
 }

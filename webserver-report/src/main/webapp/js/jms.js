@@ -5,6 +5,9 @@ function JmsCtrl($scope, $http, applicationsService) {
     $scope.server = "";
     $scope.qcf = "";
 
+    $scope.startDate = moment().subtract('days', 7).hours(0).minutes(0).seconds(0).toDate(); //
+    $scope.endDate = moment().add('days', 1).hours(0).minutes(0).seconds(0).toDate(); //
+
     $scope.applications = applicationsService.retrieveApps();
     $scope.ass = "";
     $scope.servers = "";
@@ -12,7 +15,6 @@ function JmsCtrl($scope, $http, applicationsService) {
     $scope.chart = initChart();
 
     $scope.doAppFocusOut = function () {
-        console.log("doAppFocusOut");
         $scope.ass = applicationsService.retrieveASS($scope.applicationName);
         $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
     }
@@ -26,10 +28,15 @@ function JmsCtrl($scope, $http, applicationsService) {
     $scope.display = function () {
         var type = "used-connections";
         console.log("display JMS");
+        var strDate ='';
+        if ($scope.startDate != null)
+            strDate+= '&startDate='+$scope.startDate.getTime()
+        if ($scope.endDate != null)
+            strDate+= '&endDate=' + $scope.endDate.getTime();
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
-            url: '/report/monitor?action=' + type + '&applicationName=' + $scope.applicationName + '&server=' + $scope.server + '&as=' + $scope.as + '&idObject=' + $scope.qcf
+            url: '/report/monitor?action=' + type + '&applicationName=' + $scope.applicationName + '&server=' + $scope.server + '&as=' + $scope.as + '&idObject=' + $scope.qcf + strDate
         });
         reqA.done(function (qcf) {
             $scope.chart.addSeries({

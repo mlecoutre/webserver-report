@@ -1,7 +1,7 @@
 /**
  * Scheduler controller
  */
-function SchedulerCtrl($scope, $http, schedulerService) {
+function SchedulerCtrl($scope, $rootScope, $http, schedulerService) {
 
     $scope.schedulerId;
     $scope.applicationName;
@@ -13,6 +13,9 @@ function SchedulerCtrl($scope, $http, schedulerService) {
     $scope.allSchedulers = listSchedulers("");
     $scope.schedulers;
     $scope.filter = "";
+
+    $scope.scheduler;
+
 
     function listSchedulers(filter){
         var promise = schedulerService.listSchedulers(filter);
@@ -78,6 +81,7 @@ function SchedulerCtrl($scope, $http, schedulerService) {
         var promise = schedulerService.findSchedulerById(scheduler.schedulerId);
 
         promise.then(function (scheduler) {
+
             $scope.schedulerId = scheduler.schedulerId;
             $scope.applicationName = scheduler.applicationName;
             $scope.asName = scheduler.asName;

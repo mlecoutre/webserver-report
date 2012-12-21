@@ -78,7 +78,7 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         DBCollection collection = db.getCollection(applicationName);
         BasicDBObject filter = new BasicDBObject();
-        filter.put("type", "was.pool.ds");
+        filter.put("type", "pool.ds");
 
         if (serverName != null)
             filter.put("server", serverName);
@@ -103,7 +103,7 @@ public class MonitorPolicy implements Constants {
         DB db = MongoListener.getMongoDB();
         DBCollection coll = db.getCollection(applicationName);
         BasicDBObject filter = new BasicDBObject();
-        filter.put("type","was.pool.qcf");
+        filter.put("type", "pool.qcf");
 
         if (serverName != null)
             filter.put("server", serverName);
@@ -436,6 +436,13 @@ public class MonitorPolicy implements Constants {
             while ((line = bufferedReader.readLine()) != null) {
 
                 DBObject doc = (DBObject) JSON.parse(line);
+                //mange ds for tomcat and for was
+                String type = (String) doc.get("type");
+                if (type.indexOf("pool.ds") > 0) {
+                    doc.put("type", "pool.ds");
+                } else if (type.indexOf("pool.qcf") > 0) {
+                    doc.put("type", "pool.qcf");
+                }
                 //manage timestamp as date, not as string.
                 String ts = (String) doc.get("timestamp");
                 Date eventTimestamp = null;
@@ -462,11 +469,12 @@ public class MonitorPolicy implements Constants {
         return nbElts;
     }
 
-    /**
+
+    /*
      * Temporary method to update the model for timestamp modification
      * @param applicationName
      * @return
-     */
+
     public static boolean updateModel(String applicationName) {
         DB db = MongoListener.getMongoDB();
         DBCollection collection = db.getCollection(applicationName);
@@ -496,13 +504,12 @@ public class MonitorPolicy implements Constants {
         }   // end loop
         logger.info("Process ended for " + applicationName);
         return true;
-
-
     }
-
+     */
 
     /**
      * Temporary method to update the model for timestamp modification
+     *
      * @param applicationName
      * @return
      */

@@ -68,7 +68,7 @@ public class MonitorConfigService {
 				long added = MonitorPolicy.batchInsert(f.getFileName(), applicationName, serverName, asName);
 				count = count + added;
 			} catch (IOException e) {
-				logger.warn("Exception occured while insert datas from " + f.getFileName(), e);
+				logger.warn("Exception occured while insert data from " + f.getFileName(), e);
 			}
         }
         return String.format("%d elements stored in the dataStore for the application %s", count, applicationName);
@@ -96,6 +96,6 @@ public class MonitorConfigService {
     @Path("/update/{applicationName}")
     public boolean update(@PathParam("applicationName") String applicationName){
         logger.info("update "+applicationName);
-        return MonitorPolicy.updateModel(applicationName);
+        return MonitorPolicy.updateType(applicationName);
     }
 }

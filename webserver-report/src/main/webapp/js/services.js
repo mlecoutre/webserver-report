@@ -133,7 +133,7 @@ angular.module('reportApp.services', [])
             var deferred = $q.defer();
             $http({
                 method: 'GET',
-                url: '/report/services/MonitorConfig/purge/' + $scope.applicationName
+                url: '/report/services/MonitorConfig/purge/' + applicationName
             })
                 .success(function (data, status, headers, config) {
                 console.log("SUCCESS ApplicationService - purge()");

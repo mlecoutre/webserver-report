@@ -36,11 +36,11 @@ This cmd will load the MongoServer.main() class that start a tomcat instance
 
 Technology used
 ===============
-* Angular.js
+* Angular.js  / angular-ui
+* moment.js
 * Mongo
 * jquery.js
 * bootstrap.js
-* Mustache.js
 * HighCharts.js
 * Servlet 3.0
 * JAX-RS

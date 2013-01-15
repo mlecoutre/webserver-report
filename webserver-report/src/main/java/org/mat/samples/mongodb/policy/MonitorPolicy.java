@@ -1,11 +1,17 @@
 package org.mat.samples.mongodb.policy;
 
+import com.mongodb.*;
+import com.mongodb.util.JSON;
+import org.mat.samples.mongodb.Constants;
+import org.mat.samples.mongodb.listener.MongoListener;
+import org.mat.samples.mongodb.vo.ApplicationStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -13,21 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import org.bson.types.ObjectId;
-import org.mat.samples.mongodb.Constants;
-import org.mat.samples.mongodb.listener.MongoListener;
-import org.mat.samples.mongodb.vo.ApplicationStats;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
-import com.mongodb.util.JSON;
 
 /**
  * MonitorPolicy
@@ -125,9 +116,12 @@ public class MonitorPolicy implements Constants {
      */
     public static List<String> listASs(String applicationName) {
         DB db = MongoListener.getMongoDB();
-        DBCollection coll = db.getCollection(applicationName);
 
-        List mList = coll.distinct("asName");
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("applicationName", applicationName);
+        DBCollection coll = db.getCollection(SCHEDULER_CONFIG_COLLECTION);
+
+        List mList = coll.distinct("asName", filter);
         logger.info("listASs: " + mList.size());
         return mList;
     }
@@ -140,9 +134,11 @@ public class MonitorPolicy implements Constants {
      */
     public static List<String> listServers(String applicationName) {
         DB db = MongoListener.getMongoDB();
-        DBCollection coll = db.getCollection(applicationName);
+        BasicDBObject filter = new BasicDBObject();
+        filter.put("applicationName", applicationName);
+        DBCollection coll = db.getCollection(SCHEDULER_CONFIG_COLLECTION);
 
-        List<String> mList = coll.distinct("server");
+        List<String> mList = coll.distinct("serverName", filter);
         logger.info("listServers: " + mList.size());
         return mList;
     }
@@ -208,7 +204,6 @@ public class MonitorPolicy implements Constants {
         DBCursor cursor = collection.find(filter, fields).sort(sortDBO);
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
             writer.write("[\n".getBytes());
 
             while (cursor.hasNext()) {

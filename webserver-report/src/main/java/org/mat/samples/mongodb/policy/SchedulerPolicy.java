@@ -1,13 +1,7 @@
 package org.mat.samples.mongodb.policy;
 
-import static org.mat.samples.mongodb.listener.SchedulerListener.schedule;
-import static org.mat.samples.mongodb.listener.SchedulerListener.unSchedule;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
-import org.apache.commons.beanutils.BeanUtils;
+import com.mongodb.*;
+import com.mongodb.util.JSON;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,13 +12,12 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
-import com.mongodb.util.JSON;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import static org.mat.samples.mongodb.listener.SchedulerListener.schedule;
+import static org.mat.samples.mongodb.listener.SchedulerListener.unSchedule;
 
 /**
  * SchedulerPolicy

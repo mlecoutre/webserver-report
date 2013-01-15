@@ -1,10 +1,12 @@
 package org.mat.samples.mongodb.services;
 
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.util.JSON;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mat.samples.mongodb.Constants;
 import org.mat.samples.mongodb.listener.MongoListener;
 import org.mat.samples.mongodb.policy.MonitorPolicy;
 
@@ -34,6 +36,13 @@ public class MonitorServiceTest {
     @Before
     public void setUp() throws Exception {
         ml.contextInitialized(null);
+        //create configuration for getting as and server data.
+        BasicDBObject obj = new BasicDBObject();
+        obj.put("applicationName", APPLICATION_NAME);
+        obj.put("serverName", SERVER_NAME);
+        obj.put("asName", AS_NAME);
+        obj.put("state", "manual");
+        MongoListener.getMongoDB().getCollection(Constants.SCHEDULER_CONFIG_COLLECTION).insert(obj);
         MonitorPolicy.batchInsert(MongoListener.class.getResource(RESOURCE_FILE).toExternalForm(), APPLICATION_NAME, SERVER_NAME, AS_NAME);
     }
 

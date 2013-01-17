@@ -3,11 +3,7 @@ package org.mat.samples.mongodb.services;
 import java.io.IOException;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -37,22 +33,22 @@ public class SchedulerService {
 		return SchedulerPolicy.findSchedulerById(schedulerId);
 	}
 
-	@GET
-	@Path("/delete/{schedulerId}")
+	@DELETE
+	@Path("/{schedulerId}")
 	public boolean deleteSchedulerById(
 			@PathParam("schedulerId") String schedulerId) throws SchedulerException {
 		return SchedulerPolicy.deleteSchedulerById(schedulerId);
 	}
 	
-	@GET
-	@Path("/stop/{schedulerId}")
+	@POST
+	@Path("/{schedulerId}/stop")
 	public boolean stopSchedulerById(
 			@PathParam("schedulerId") String schedulerId) throws SchedulerException, IOException {
 		return SchedulerPolicy.stopScheduler(schedulerId);
 	}
 	
-	@GET
-	@Path("/start/{schedulerId}")
+	@POST
+	@Path("/{schedulerId}/start")
 	public boolean startSchedulerById(
 			@PathParam("schedulerId") String schedulerId) throws SchedulerException, IOException {
 		return SchedulerPolicy.startScheduler(schedulerId);

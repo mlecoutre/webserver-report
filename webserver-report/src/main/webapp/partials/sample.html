@@ -16,9 +16,9 @@
                     <div class="span4">
                         <form class="form-search">
                             <div class="input-append">
-                                <input type="text" ng-change="search()" ng-model="filter"
+                                <input type="text" ng-change="applyFilter()" ng-model="filter"
                                        class="input-medium search-query" placeholder="Filter...">
-                                <button type="submit" ng-click="search()" class="btn btn-primary">
+                                <button type="submit" ng-click="refresh()" class="btn btn-primary">
                                     <i class="icon-search"/>
                                 </button>
                             </div>
@@ -49,7 +49,7 @@
                     <td><a ng-click="changeStatus(scheduler)">{{scheduler.state}}</a></td>
                     <td>{{scheduler.lastExecution | date:"dd/MM/yyyy HH:mm:ss"}}</td>
                     <td>{{scheduler.lastStatus | displayStatus}}</td>
-                    <td>  <a class="del" ng-table-action="deleteScheduler(scheduler.schedulerId)" href="#"><i
+                    <td>  <a class="del" ng-table-action="deleteScheduler(scheduler)" href="#"><i
                             class="icon-trash"></i></a>
                         <a class="edit" ng-table-action="initScheduler(scheduler)" href="#"><i
                                 class="icon-edit"></i></a>
@@ -65,29 +65,29 @@
             <div class="well">
                 <form name="editScheduler" class="control-group" ng-class="{error: editScheduler.name.$invalid}">
                     <p>{{schedulerId}}</p>
-                    <label>Application Name <input type="text" name="applicationName" ng-model="applicationName"
+                    <label>Application Name <input type="text" name="applicationName" ng-model="scheduler.applicationName"
                                                    required>
                          <span ng-show="editScheduler.applicationName.$error.required" class="help-inline">
         This field is required</span>
                     </label>
-                    <label>AS<input type="text" name="asName" ng-model="asName" required>
+                    <label>AS<input type="text" name="asName" ng-model="scheduler.asName" required>
                       <span ng-show="editScheduler.asName.$error.required" class="help-inline">
         This field is required</span>
                     </label>
-                    <label>Server<input type="text" name="serverName" ng-model="serverName" required>
+                    <label>Server<input type="text" name="serverName" ng-model="scheduler.serverName" required>
                         <span ng-show="editScheduler.serverName.$error.required" class="help-inline">
         This field is required</span>
 
                     </label>
-                    <label>Monitoring Servlet URL<input type="url" name="endPointURL" ng-model="endPointURL" required>
+                    <label>Monitoring Servlet URL<input type="url" name="endPointURL" ng-model="scheduler.endPointURL" required>
             <span ng-show="editScheduler.endPointURL.required" class="help-inline">
          This field is required</span>
                     <span ng-show="editScheduler.endPointURL.$error.url" class="help-inline">
         This is not a valid URL</span>
                     </label>
-                    <label>Interval: {{requestRepeatIntervalInMinutes}} mn
+                    <label>Interval: {{scheduler.requestRepeatIntervalInMinutes}} mn
                         <input type="range" min="2" max="60" step="2" value="10"
-                               ng-model="requestRepeatIntervalInMinutes">
+                               ng-model="scheduler.requestRepeatIntervalInMinutes">
 
                     </label>
 

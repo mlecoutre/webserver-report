@@ -11,25 +11,40 @@
             <div class="accordion-inner">
                 <div class="row">
                     <div class="span4">
-                        <label for="selApplicationName">Application Name<input type="text" id="selApplicationName" ng-model="applicationName"
+                        <label for="selApplicationName">Application Name</label>
+                        <!--
+                        <input type="text" id="selApplicationName" ng-model="applicationName"
                                                                                list="applications" ng-focus-out="doAppFocusOut()"> </label>
                         <datalist id="applications">
                             <option ng-repeat="app in applications" value="{{app}}"></option>
                         </datalist>
+                        -->
+                        <select ng-model="applicationName" ng-focus-out="doAppFocusOut()" ng-options="mApp for mApp in applications">
+                             
+                        </select>
                     </div>
                     <div class="span4">
-                        <label for="selAS">AS<input type="text" id="selAS" cc list="ass"  ng-model="as" /> </label>
+                        <label for="selAS">AS</label>
+                     <!--   <input type="text" id="selAS" cc list="ass"  ng-model="as" /> 
                         <datalist id="ass">
                             <option ng-repeat="as in ass" value="{{as}}"></option>
                         </datalist>
+                      -->
+                         <select ng-model="as" ng-options="mAss for mAss in ass" >
+                        </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="span4">
-                        <label for="selServer">Servers<input type="text" id="selServer" cc list="lServers"   ng-model="server"> </label>
+                        <label for="selServer">Servers</label>
+                        <!--
+                        <input type="text" id="selServer" cc list="lServers"   ng-model="server"> 
                         <datalist id="lServers">
                             <option ng-repeat="server in servers" value="{{server}}"></option>
                         </datalist>
+                        -->
+                        <select ng-model="server" ng-options = "mServer for mServer in servers">
+                        </select>
                     </div>
                     <div class="span4 well form-inline">
                         <label for="startDate">Start Date

@@ -7,38 +7,48 @@ function JmsCtrl($scope, $http, applicationsService) {
 
     $scope.startDate = moment().subtract('days', 7).hours(0).minutes(0).seconds(0).toDate(); //
     $scope.endDate = moment().add('days', 1).hours(0).minutes(0).seconds(0).toDate(); //
-
-    $scope.applications = applicationsService.retrieveApps();
     $scope.ass = "";
     $scope.servers = "";
     $scope.qcfs = "";
     $scope.chart = initChart();
-
-    $scope.doAppFocusOut = function () {
+    $scope.applications = applicationsService.retrieveApps();
+    if(localStorage.applicationName) {
+        console.log("initFilterForm - retrieve data from cache");
+        $scope.applicationName = localStorage.applicationName;
+        $scope.as = localStorage.as;
+        $scope.server = localStorage.server;
         $scope.ass = applicationsService.retrieveASS($scope.applicationName);
         $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
     }
 
-    $scope.showQCF = function () {
+    $scope.doAppFocusOut = function() {
+        $scope.ass = "";
+        $scope.servers = "";
+        $scope.ass = applicationsService.retrieveASS($scope.applicationName);
+        $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
+    }
+
+    $scope.showQCF = function() {
         console.log("showQCF");
         $scope.qcfs = applicationsService.retrieveQCFs($scope.applicationName, $scope.server, $scope.as);
         $('#JMSBox').show();
     }
 
-    $scope.display = function () {
+    $scope.display = function() {
+        localStorage.applicationName = $scope.applicationName;
+        localStorage.server = $scope.server;
+        localStorage.as = $scope.as;
         var type = "used-connections";
         console.log("display JMS");
-        var strDate ='';
-        if ($scope.startDate != null)
-            strDate+= '&startDate='+$scope.startDate.getTime()
-        if ($scope.endDate != null)
-            strDate+= '&endDate=' + $scope.endDate.getTime();
+        var strDate = '';
+        if($scope.startDate != null) strDate += '&startDate=' + $scope.startDate.getTime()
+        if($scope.endDate != null) strDate += '&endDate=' + $scope.endDate.getTime();
         var reqA = $.ajax({
             type: 'GET',
             contentType: 'application/json',
             url: '/report/monitor?action=' + type + '&applicationName=' + $scope.applicationName + '&server=' + $scope.server + '&as=' + $scope.as + '&idObject=' + $scope.qcf + strDate
         });
-        reqA.done(function (qcf) {
+        reqA.done(function(qcf) {
             $scope.chart.addSeries({
                 type: 'spline',
                 name: type,
@@ -47,8 +57,8 @@ function JmsCtrl($scope, $http, applicationsService) {
         })
     }
 
-    $scope.clear = function () {
-        while (chart.series.length > 0)
+    $scope.clear = function() {
+        while(chart.series.length > 0)
         chart.series[0].remove(true);
     }
 
@@ -76,8 +86,8 @@ function JmsCtrl($scope, $http, applicationsService) {
                 type: 'datetime',
             },
             tooltip: {
-                formatter: function () {
-                    return moment(this.x).format('LLLL') + ', ' + this.y +' connections';
+                formatter: function() {
+                    return moment(this.x).format('LLLL') + ', ' + this.y + ' connections';
                 }
             },
             series: []

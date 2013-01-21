@@ -1,4 +1,4 @@
-function DataSourceCtrl($scope, $http, applicationsService) {
+function DataSourceCtrl($scope, applicationsService) {
 
 
     $scope.applicationName = "";
@@ -9,13 +9,24 @@ function DataSourceCtrl($scope, $http, applicationsService) {
     $scope.startDate = moment().subtract('days', 7).hours(0).minutes(0).seconds(0).toDate(); //
     $scope.endDate = moment().add('days', 1).hours(0).minutes(0).seconds(0).toDate(); //
 
-    $scope.applications = applicationsService.retrieveApps();
     $scope.ass = "";
     $scope.servers = "";
     $scope.dataSources;
     $scope.chart = initChart();
 
+    $scope.applications = applicationsService.retrieveApps();
+    if(localStorage.applicationName) {
+        console.log("initFilterForm - retrieve data from cache");
+        $scope.applicationName = localStorage.applicationName;
+        $scope.as = localStorage.as;
+        $scope.server = localStorage.server;
+        $scope.ass = applicationsService.retrieveASS($scope.applicationName);
+        $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
+    }
+
     $scope.doAppFocusOut = function () {
+        $scope.ass = "";
+        $scope.servers = "";
         $scope.ass = applicationsService.retrieveASS($scope.applicationName);
         $scope.servers = applicationsService.retrievePhysicalServers($scope.applicationName);
     }
@@ -27,11 +38,16 @@ function DataSourceCtrl($scope, $http, applicationsService) {
     };
 
   $scope.display = function () {
+        localStorage.applicationName = $scope.applicationName;
+        localStorage.server = $scope.server;
+        localStorage.as = $scope.as;
+        /*
         var as = $('#selAS').val();
         var server = $('#selServer').val();
         var dataSource = $('#selDataSource').val();
         var applicationName = $('#selApplicationName').val();
-        addDSChart(chart, 'used-connections', applicationName, server, as, dataSource);
+        */
+        addDSChart(chart, 'used-connections', $scope.applicationName, $scope.server, $scope.as, $scope.dataSource);
     };
 
     $scope.clear = function () {

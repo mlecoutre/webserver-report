@@ -148,4 +148,4 @@ angular.module('reportApp.services', [])
     // the Factory return an instance of the applicationService
     return new ApplicationService($http, $q);
 }]).
-value('version', '1.0.0');
+value('version', '1.0.1');

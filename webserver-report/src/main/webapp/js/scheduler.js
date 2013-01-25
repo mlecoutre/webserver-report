@@ -12,8 +12,7 @@ function SchedulerCtrl($scope, Scheduler, $cacheFactory) {
 
     $scope.addScheduler = function() {
         console.log("addScheduler");
-        $scope.scheduler.$save(
-
+        Scheduler.save($scope.scheduler,
         function() {
             listSchedulers();
             displaySuccessMessage("Scheduler successfully created");

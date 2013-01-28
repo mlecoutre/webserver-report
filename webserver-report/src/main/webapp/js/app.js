@@ -14,7 +14,7 @@ angular.module('reportApp', ['reportApp.filters', 'reportApp.services', 'reportA
         when('/about', {templateUrl: 'partials/about.html'}).
         when('/memory', {templateUrl: 'partials/memory.html', controller: MemoryCtrl}).
         when('/datasource', {templateUrl: 'partials/datasource.html', controller: DataSourceCtrl}).
-        when('/sample', {templateUrl: 'partials/sample.html', controller: SampleCtrl}).
+        when('/sample', {templateUrl: 'partials/sample.html'}).
         when('/thread', {templateUrl: 'partials/thread.html', controller: ThreadCtrl}).
         when('/jms', {templateUrl: 'partials/jms.html', controller: JmsCtrl}).
         otherwise({redirectTo: '/index'});

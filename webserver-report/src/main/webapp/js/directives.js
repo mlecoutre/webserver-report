@@ -32,4 +32,13 @@ directive('appVersion', ['version', function (version) {
               });
           }
       };
+}).directive('ngAjaxLoading', function () {
+       return function (scope, element, attrs) {
+              element.bind('ajaxStart', function () {
+                    element.show();
+              });
+               element.bind('ajaxStop', function () {
+                    element.hide();
+               });
+          }
 });

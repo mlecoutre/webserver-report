@@ -144,6 +144,22 @@ angular.module('reportApp.services', [])
                 return deferred.resolve(data);
             });
         }
+
+        this.displayErrorMessage = function (msg) {
+                $('#msg').html(msg);
+                $('#msgBox').removeClass().addClass('alert alert-error');
+                $('#msgBox').fadeIn('slow')
+                            .delay(5000)
+                            .fadeOut('fast', function() { $(this).hide(); })
+            }
+
+        this.displaySuccessMessage =  function (msg) {
+                $('#msg').html(msg);
+                $('#msgBox').removeClass().addClass('alert alert-success');
+                $('#msgBox').fadeIn('slow')
+                            .delay(5000)
+                            .fadeOut('fast', function() { $(this).hide(); })
+            }
     }
     // the Factory return an instance of the applicationService
     return new ApplicationService($http, $q);

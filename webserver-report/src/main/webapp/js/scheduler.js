@@ -1,132 +1,108 @@
-/**
- * Scheduler controller
- * http://docs.angularjs.org/api/ngResource.$resource
- */
+(function() {
 
-function SchedulerCtrl($scope, Scheduler, $cacheFactory) {
+  window.SchedulerCtrl = function($scope, Scheduler, applicationsService) {
+    var listSchedulers, searchScheduler;
     $scope.scheduler;
-    $scope.allSchedulers = listSchedulers(); // all schedulers
-    $scope.schedulers; // displayed schedulers once filter is applied
-    $scope.filter = "";
-
-
+    $scope.schedulers = Scheduler.query();
+    $scope.mfilter = "";
+    $scope.allSchedulers = $scope.schedulers;
+    listSchedulers = function() {
+      console.log("list scheduler");
+      return Scheduler.query(function(schedulers) {
+        $scope.allSchedulers = schedulers;
+        return $scope.schedulers = searchScheduler(schedulers);
+      });
+    };
+    searchScheduler = function(schedulers) {
+      var s, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = schedulers.length; _i < _len; _i++) {
+        s = schedulers[_i];
+        if ((s.applicationName + s.asName + s.serverName).match($scope.mfilter)) {
+          _results.push(s);
+        }
+      }
+      return _results;
+    };
     $scope.addScheduler = function() {
-        console.log("addScheduler");
-        Scheduler.save($scope.scheduler,
-        function() {
-            listSchedulers();
-            displaySuccessMessage("Scheduler successfully created");
-        }, function() {
-            displayErrorMessage("ERROR, Scheduler unsuccessfully created");
-        });
-    }
-
-    $scope.applyFilter = searchScheduler;
-    $scope.refresh = listSchedulers;
-
-    function listSchedulers() {
-        Scheduler.query(
-
-        function(schedulers) {
-            $scope.allSchedulers = schedulers;
-            searchScheduler(schedulers);
-        });
-    }
-
-    $scope.initScheduler = function(scheduler) {
-        console.log("initScheduler");
-        var shed = Scheduler.get({
-            schedulerId: scheduler.schedulerId
-        }, function() {
-            $scope.scheduler = scheduler;
-            $('#titleEdit').click();
-            $('#updateScheduler').show();
-            $('#addScheduler').hide();
-        });
-
-    }
-
-    $scope.cancel = function() {
-        $scope.scheduler = null;
+      console.log("addScheduler");
+      return Scheduler.save($scope.scheduler, function() {
         listSchedulers();
+        return applicationsService.displaySuccessMessage("Scheduler successfully created");
+      }, function() {
+        return applicationsService.displayErrorMessage("ERROR, Scheduler unsuccessfully created");
+      });
+    };
+    $scope.applyFilter = function() {
+      return $scope.schedulers = searchScheduler($scope.allSchedulers, $scope.mfilter);
+    };
+    $scope.refresh = function() {
+      return listSchedulers();
+    };
+    $scope.initScheduler = function(scheduler) {
+      var shed;
+      console.log("initScheduler");
+      return shed = Scheduler.get({
+        schedulerId: scheduler.schedulerId
+      }, function() {
+        $scope.scheduler = scheduler;
+        $('#titleEdit').click();
+        $('#updateScheduler').show();
+        return $('#addScheduler').hide();
+      });
+    };
+    $scope.cancel = function() {
+      $scope.scheduler = null;
+      listSchedulers();
+      $('#reset').click();
+      $('#titleList').click();
+      $('#updateScheduler').hide();
+      return $('#addScheduler').show();
+    };
+    $scope.deleteScheduler = function(scheduler) {
+      console.log("deleteScheduler");
+      return scheduler.$remove({
+        schedulerId: scheduler.schedulerId
+      }, function() {
+        listSchedulers();
+        return applicationsService.displaySuccessMessage("Scheduler successfully deleted");
+      }, function() {
+        return applicationsService.displayErrorMessage("ERROR, Scheduler unsuccessfully deleted");
+      });
+    };
+    $scope.updateScheduler = function() {
+      console.log("updateScheduler");
+      return $scope.scheduler.$save({
+        schedulerId: $scope.scheduler.schedulerId
+      }, function() {
+        listSchedulers();
+        applicationsService.displaySuccessMessage("Scheduler successfully updated");
         $('#reset').click();
         $('#titleList').click();
         $('#updateScheduler').hide();
-        $('#addScheduler').show();
-    }
-
-    $scope.deleteScheduler = function(scheduler) {
-        console.log("deleteScheduler")
-        scheduler.$remove({
-            schedulerId: scheduler.schedulerId
-        }, function() {
-            listSchedulers();
-            displaySuccessMessage("Scheduler successfully deleted");
-
-        }, function() {
-            displayErrorMessage("ERROR, Scheduler unsuccessfully deleted");
-        });
-    }
-
-    $scope.updateScheduler = function() {
-        console.log("updateScheduler");
-        $scope.scheduler.$save({
-            schedulerId: $scope.scheduler.schedulerId
-        }, function() {
-            listSchedulers();
-            displaySuccessMessage("Scheduler successfully updated");
-            $('#reset').click();
-            $('#titleList').click();
-            $('#updateScheduler').hide();
-            $('#addScheduler').show();
-        }, function() {
-            displayErrorMessage("ERROR, Scheduler unsuccessfully updated");
-        });
-    }
-
-    $scope.changeStatus = function(scheduler) {
-        console.log("changeStatus");
-        if(scheduler.state == 'running') {
-            scheduler.$stop({}, function() {
-                listSchedulers();
-                displaySuccessMessage("Scheduler successfully stopped");
-            }, function() {
-                displayErrorMessage("ERROR Scheduler UNsuccessfully stopped");
-            });
-        } else {
-            scheduler.$start({}, function() {
-                listSchedulers();
-                displaySuccessMessage("Scheduler successfully started");
-            }, function() {
-                displayErrorMessage("ERROR Scheduler UNsuccessfully started");
-            });
-        }
+        return $('#addScheduler').show();
+      }, function() {
+        return applicationsService.displayErrorMessage("ERROR, Scheduler unsuccessfully updated");
+      });
     };
+    return $scope.changeStatus = function(scheduler) {
+      console.log("changeStatus");
+      if (scheduler.state === 'running') {
+        return scheduler.$stop({}, function() {
+          listSchedulers();
+          return applicationsService.displaySuccessMessage("Scheduler successfully stopped");
+        }, function() {
+          return applicationsService.displayErrorMessage("ERROR Scheduler UNsuccessfully stopped");
+        });
+      } else {
+        return scheduler.$start({}, function() {
+          listSchedulers();
+          return applicationsService.displaySuccessMessage("Scheduler successfully started");
+        }, function() {
+          return applicationsService.displayErrorMessage("ERROR Scheduler UNsuccessfully started");
+        });
+      }
+    };
+  };
 
-    function searchScheduler() {
-        var sList = [];
-        for(var i = 0; i < $scope.allSchedulers.length; i++) {
-            var s = $scope.allSchedulers[i];
-            var str = s.applicationName + s.asName + s.serverName;
-            if(str == null || str == 0) {
-                continue;
-            }
-            if(str.match($scope.filter) != null) {
-                sList.push(s);
-            }
-        }
-        $scope.schedulers = sList;
-    }
-
-    function displayErrorMessage(msg) {
-        $('#msg').html(msg);
-        $('#msgBox').removeClass().addClass('alert alert-error');
-        $('#msgBox').show();
-    }
-
-    function displaySuccessMessage(msg) {
-        $('#msg').html(msg);
-        $('#msgBox').removeClass().addClass('alert alert-success');
-        $('#msgBox').show();
-    }
-}
+}).call(this);

@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AngularJS test</title>
+    <link rel="stylesheet" href="testRunnerStyle.css">
+    <script src="https://raw.github.com/pivotal/jasmine/master/lib/jasmine-core/jasmine.js"></script>
+    <script src="https://raw.github.com/pivotal/jasmine/master/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="../../main/webapp/lib/js/angular.min.js"></script>
+    <script src="../../main/webapp/lib/js/angular-resource.min.js"></script>
+    <script src="../../main/webapp/lib/js/angular-ui.min.js"></script>
+    <script src="http://code.angularjs.org/1.0.3/angular-mocks.js"></script>
+    <script src="../../main/webapp/js/app.js"></script>
+    <script src="../../main/webapp/js/scheduler.js"></script>
+    <script src="../../main/webapp/js/loader.js"></script>
+    <script src="../../main/webapp/js/memory.js"></script>
+    <script src="../../main/webapp/js/thread.js"></script>
+    <script src="../../main/webapp/js/jms.js"></script>
+    <script src="../../main/webapp/js/sample.js"></script>
+    <script src="../../main/webapp/js/datasource.js"></script>
+
+    <script src="../../main/webapp/js/schedulersService.js"></script>
+    <script src="../../main/webapp/js/services.js"></script>
+    <script src="../../main/webapp/js/directives.js"></script>
+    <script src="../../main/webapp/js/filters.js"></script>
+
+    <script src="specs/schedulerSpec.js"></script>
+</head>
+<body>
+
+<script>
+    // KICK OFF JASMINE
+    var jasmineEnv = jasmine.getEnv();
+    var trivialReporter = new jasmine.TrivialReporter();
+
+    jasmineEnv.addReporter(trivialReporter);
+
+    jasmineEnv.specFilter = function(spec) {
+    return trivialReporter.specFilter(spec);
+    };
+
+    jasmineEnv.execute();
+</script>
+
+</body>
+</html>

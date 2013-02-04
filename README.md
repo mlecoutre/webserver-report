@@ -49,7 +49,7 @@ Technology used
 
 Develop
 =======
-![basic uml diag](https://github.com/mlecoutre/webserver-report/blob/master/doc/img/webserver-report.png "Basic UML representation")
+![basic uml diag](https://raw.github.com/mlecoutre/webserver-report/master/doc/img/webserver-report.png "Basic UML representation")
 
 
 

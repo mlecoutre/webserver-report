@@ -27,11 +27,10 @@ We can extract data on
 Run the project
 ===============
 We use maven to build the project
-* <em>mvn clean package<em>
 ```
-run.bat
+mvn clean package tomcat7:run
 ```
-This cmd will load the MongoServer.main() class that start a tomcat instance
+
 
 
 Technology used

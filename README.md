@@ -39,8 +39,17 @@ Technology used
 * Angular.js  / angular-ui
 * moment.js
 * Mongo
-* jquery.js
+* jQuery
 * bootstrap.js
 * HighCharts.js
 * Servlet 3.0
 * JAX-RS
+* Coffee
+* Jasmine for test
+
+Develop
+=======
+![basic uml diag](https://github.com/mlecoutre/webserver-report/doc/img/webserver-report.png "Basic UML representation")
+
+
+

@@ -32,7 +32,7 @@ function DataSourceCtrl($scope, applicationsService) {
     }
 
     $scope.showDS = function () {
-        console.log("showQCF");
+        console.log("showDS");
         $scope.dataSources = applicationsService.retrieveDataSources($scope.applicationName, $scope.server, $scope.as);
         $('#dataSourceBox').show();
     };

@@ -1,10 +1,11 @@
 package am.projects.webserver.report.services;
 
+import am.projects.webserver.report.Constants;
+import am.projects.webserver.report.TestConstants;
 import com.mongodb.DBObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import am.projects.webserver.report.Constants;
 import am.projects.webserver.report.listener.MongoListener;
 import am.projects.webserver.report.policy.MonitorPolicy;
 import am.projects.webserver.report.policy.SchedulerPolicy;
@@ -18,10 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-public class SchedulerPolicyTest implements Constants {
-    private static final String MONGO_SERVER = "dun-tst-devf01";
-    private static final int MONGO_PORT = 27017;
-    private static final String MONGO_DB = "mydbTest";
+public class SchedulerPolicyTest implements TestConstants {
 
     private static DBObject oneObject;
 
@@ -45,7 +43,7 @@ public class SchedulerPolicyTest implements Constants {
 
     @After
     public void tearDown() throws Exception {
-        MonitorPolicy.purgeDB(SCHEDULER_CONFIG_COLLECTION);
+        MonitorPolicy.purgeDB(Constants.SCHEDULER_CONFIG_COLLECTION);
         ml.contextDestroyed(null);
     }
 
@@ -77,7 +75,7 @@ public class SchedulerPolicyTest implements Constants {
         List<Scheduler> schedulers = SchedulerPolicy.listSchedulers();
         if (null != schedulers && !schedulers.isEmpty()) {
             Scheduler scheduler = schedulers.get(0);
-            scheduler.setState(STATUS_STOPPED);
+            scheduler.setState(Constants.STATUS_STOPPED);
             if (SchedulerPolicy.updateScheduler(scheduler.getSchedulerId(), scheduler)) {
                 schedulers = SchedulerPolicy.listSchedulers();
                 if (null != schedulers) {

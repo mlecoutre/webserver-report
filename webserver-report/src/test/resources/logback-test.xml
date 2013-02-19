@@ -6,8 +6,7 @@
             <Pattern>%d{HH:mm:ss.SSS} %-5level [%thread]  %logger{10} - %msg%n</Pattern>
         </encoder>
     </appender>
-
-    <logger name="org.mat.samples" level="DEBUG"/>
+    <logger name="am.projects.webserver.report" level="DEBUG"/>
     <logger name="org.quartz" level="INFO"/>
     <root level="INFO">
         <appender-ref ref="STDOUT" />

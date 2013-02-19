@@ -1,1 +1,0 @@
-java -cp target/classes:target/dependency/* org.mat.MongoServer

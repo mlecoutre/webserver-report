@@ -1,11 +1,12 @@
 package am.projects.webserver.report.services;
 
+import am.projects.webserver.report.Constants;
+import am.projects.webserver.report.TestConstants;
 import com.mongodb.BasicDBObject;
 import com.mongodb.util.JSON;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import am.projects.webserver.report.Constants;
 import am.projects.webserver.report.listener.MongoListener;
 import am.projects.webserver.report.policy.MonitorPolicy;
 
@@ -21,14 +22,8 @@ import java.util.Set;
  * Date: 27/11/12
  * Time: 14:56
  */
-public class MonitorServiceTest {
-    private static final String MONGO_SERVER = "dun-tst-devf01";
-    private static final int MONGO_PORT = 27017;
-    private static final String MONGO_DB = "mydbTest";
-    private static final String RESOURCE_FILE = "/j2eeMonitoring.log";
-    private static final String SERVER_NAME = "appcfm51";
-    public static final String AS_NAME = "AS_STEELUSER";
-    public static final String APPLICATION_NAME = "SteelUserTest";
+public class MonitorServiceTest implements TestConstants {
+
 
     private MongoListener ml = new MongoListener(MONGO_SERVER, MONGO_PORT, MONGO_DB);
 

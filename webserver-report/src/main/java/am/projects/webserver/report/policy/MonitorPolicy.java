@@ -28,6 +28,7 @@ import java.util.Set;
 public class MonitorPolicy implements Constants {
 
     private static Logger logger = LoggerFactory.getLogger(MonitorPolicy.class);
+    public static int HTTP_TIMEOUT = 15000;
 
     /**
      * Check if index exist for collection
@@ -160,7 +161,7 @@ public class MonitorPolicy implements Constants {
     /**
      * Write directly into the output stream the JS array for chart input data
      *
-     * @param memory          type of memory @see am.projects.webserver.report.Constants
+     * @param memory          type of memory @see am.projects.webserver.report.TestConstants
      * @param applicationName Mongo collection to be requested.
      * @param serverName      server Name
      * @param asName          Application server name
@@ -417,11 +418,15 @@ public class MonitorPolicy implements Constants {
     public static long batchInsert(String strUrl, String applicationName, String serverName, String asName) throws IOException {
         long nbElts = 0;
         BufferedReader bufferedReader = null;
+        URLConnection yc = null;
         try {
             URL u = new URL(strUrl);
-            URLConnection yc = u.openConnection();
+            yc = u.openConnection();
+            yc.setConnectTimeout(HTTP_TIMEOUT);
+            yc.setReadTimeout(HTTP_TIMEOUT);
+            yc.connect();
             bufferedReader = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            String line = null;
+            String line;
             DB db = MongoListener.getMongoDB();
             DBCollection collection = db.getCollection(applicationName);
             //Create index  if needed

@@ -62,7 +62,7 @@ public class SchedulerService {
 
 	/**
 	 * Will be used to update the scheduler, either its definition, either its
-	 * status (Constants.STATUS_RUNNING, Constants.STATUS_STOPPED)
+	 * status (TestConstants.STATUS_RUNNING, TestConstants.STATUS_STOPPED)
 	 * 
 	 * @param scheduler
 	 *            scheduler to update
